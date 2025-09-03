@@ -1,14 +1,17 @@
 #include <IRremote.h>
 
-const int RECV_PIN = 2; // Change to your IR receiver pin
+const int RECV_PIN = 2; // IR receiver pin
+const int IR_SEND_PIN = 3; // IR transmitter pin
 
 IRrecv irrecv(RECV_PIN);
 decode_results results;
+IRsend irsend(IR_SEND_PIN); // Initialize IRsend on pin 3
 
 void setup() {
   Serial.begin(9600);
   Serial.println("IRrecvDumpV2 ready");
   irrecv.enableIRIn();
+  irsend.begin(); // Initialize IR transmitter
 }
 
 void loop() {
@@ -27,7 +30,7 @@ void loop() {
 
     Serial.println("Raw timing data (microseconds):");
     for (unsigned int i = 1; i < results.rawlen; i++) {
-      Serial.print(results.rawbuf[i]); // Removed * USECPERTICK
+      Serial.print(results.rawbuf[i]); // Raw timing data
       Serial.print(i % 16 == 0 ? "\n" : "\t");
     }
 
@@ -37,6 +40,7 @@ void loop() {
       Serial.print(i % 16 == 0 ? "\n" : "\t");
     }
 
+    // Check for specific pattern to trigger sending
     if (results.rawlen >= 4 && results.rawbuf[1] == 0xBC && results.rawbuf[2] == 0x01) {
       Serial.print("Pronto Hex: ");
       for (unsigned int i = 1; i < results.rawlen; i++) {
@@ -44,6 +48,9 @@ void loop() {
         Serial.print(results.rawbuf[i], HEX);
       }
       Serial.println();
+
+      // Send the IR code back
+      irsend.sendRaw(results.rawbuf, results.rawlen, 38); // 38kHz carrier frequency
     }
 
     irrecv.resume();
