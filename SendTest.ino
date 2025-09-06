@@ -1,33 +1,34 @@
 #include <IRremote.h>
 
-IRsend irsend;
+// Pin where IR LED is connected
+const int IR_SEND_PIN = 3;
+
+// Initialize IRsend object
+IRsend irsend(IR_SEND_PIN);
 
 void setup() {
-  // Initialize IR sender
   irsend.begin();
 }
 
 void loop() {
-  // Raw timing data in microseconds
-  uint16_t rawData[] = {
-    3150, 9770, 480, 1570, 530, 520, 480, 520, 480, 520,
-    530, 1570, 430, 570, 530, 520, 530, 520, 480, 520,
-    480, 520, 530, 520, 480, 520, 480, 1620, 430, 570,
-    480, 520, 480, 570, 480, 1570, 480, 1570, 480, 1570,
-    480, 1570, 480, 520, 530, 1570, 430, 570, 480, 1570,
-    530, 1520, 530, 1570, 430, 570, 480, 520, 480
+  // Raw data array: durations in microseconds
+  // Positive values indicate mark (LED ON), negative values indicate space (LED OFF)
+  unsigned int rawData[] = {
+    3144, -9900, 512, -1592, 484, -536, 504, -528, 504, -528,
+    508, -1596, 484, -536, 504, -536, 504, -528, 508, -1576,
+    504, -1568, 504, -528, 508, -524, 508, -524, 512, -520,
+    508, -528, 504, -528, 504, -528, 508, -524, 508, -528,
+    504, -528, 504, -528, 504, -1596, 488, -524, 508, -1580,
+    484, -540, 512, -540, 508, -544, 488, -1596, 484
   };
-  const int dataSize = sizeof(rawData) / sizeof(rawData[0]);
+  
+  const int rawLength = sizeof(rawData) / sizeof(rawData[0]);
 
-  // Send the raw data with 38kHz frequency
-  irsend.sendPulseDistanceWidth(
-    38000, // Carrier frequency in Hz
-    rawData, 
-    dataSize,
-    0 // Number of repeats
-  );
-
-  delay(5000); // Wait 5 seconds before sending again
+  // Send the raw IR data
+  irsend.sendRaw(rawData, rawLength, 38); // 38kHz carrier frequency
+  
+  // Wait before sending again
+  delay(2000);
 }
 
 
