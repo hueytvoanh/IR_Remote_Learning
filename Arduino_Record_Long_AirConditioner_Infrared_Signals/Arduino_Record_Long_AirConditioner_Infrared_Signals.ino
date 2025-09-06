@@ -1,21 +1,3 @@
-Skip to content
- 
-Search Gists
-Search...
-All gists
-Back to GitHub
-@chaeplin
-chaeplin/Arduino_Record_Long_AirConditioner_Infrared_Signals_10.ino
-Last active 7 years ago • Report abuse
-Code
-Revisions
-4
-Stars
-3
-Clone this repository at &lt;script src=&quot;https://gist.github.com/chaeplin/a3a4b4b6b887c663bfe8.js&quot;&gt;&lt;/script&gt;
-<script src="https://gist.github.com/chaeplin/a3a4b4b6b887c663bfe8.js"></script>
-Arduino_Record_Long_AirConditioner_Infrared_Signals_10
-Arduino_Record_Long_AirConditioner_Infrared_Signals_10.ino
 // http://www.analysir.com/blog/2014/03/19/air-conditioners-problems-recording-long-infrared-remote-control-signals-arduino/
 // http://www.analysir.com/blog/wp-content/uploads/2014/03/Arduino_Record_Long_AirConditioner_Infrared_Signals_10.txt
 // For LG AC
@@ -23,16 +5,23 @@ Arduino_Record_Long_AirConditioner_Infrared_Signals_10.ino
 /*
 Author: AnalysIR
 Revision: 1.0
+
 This code is provided to overcome an issue with Arduino IR libraries
 It allows you to capture raw timings for signals longer than 255 marks &amp; spaces.
 Typical use case is for long Air conditioner signals.
+
 You can use the output to plug back into IRremote, to resend the signal.
+
 This Software was written by AnalysIR.
+
 Usage: Free to use, subject to conditions posted on blog below.
 Please credit AnalysIR and provide a link to our website/blog, where possible.
+
 Copyright AnalysIR 2014
+
 Please refer to the blog posting for conditions associated with use.
 http://www.analysir.com/blog/2014/03/19/air-conditioners-problems-recording-long-infrared-remote-control-signals-arduino/
+
 Connections:
 IR Receiver      Arduino
 V+          -&gt;  +5v
@@ -106,20 +95,3 @@ void rxIR_Interrupt_Handler() {
   irBuffer[x++] = micros(); //just continually record the time-stamp of signal transitions
 
 }
-@hueytvoanh
-Comment
- 
-Leave a comment
- 
-Footer
-© 2025 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-GitHub Community
-Docs
-Contact
-Manage cookies
-Do not share my personal information
