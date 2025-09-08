@@ -11,6 +11,26 @@ sendPulseDistanceWidth_P(&LGProtocolConstants, computeLGRawDataAndChecksum(aAddr
 <img width="1072" height="283" alt="image" src="https://github.com/user-attachments/assets/dda2d1be-512c-48d2-a2f6-53507bf37337" />
 
 https://github.com/Arduino-IRremote/Arduino-IRremote/blob/ee3b9cd8dab1ed61b7d8555b712dbe4a0573a544/src/IRProtocol.h#L161
+struct PulseDistanceWidthProtocolConstants {
+    decode_type_t ProtocolIndex;
+    uint_fast8_t FrequencyKHz;
+    DistanceWidthTimingInfoStruct DistanceWidthTimingInfo;
+    uint8_t Flags;
+    unsigned int RepeatPeriodMillis; // Time between start of two frames. Thus independent from frame length.
+    void (*SpecialSendRepeatFunction)(); // using non member functions here saves up to 250 bytes for send demo
+//    void (IRsend::*SpecialSendRepeatFunction)();
+};
+/*
+ * Definitions for member PulseDistanceWidthProtocolConstants.Flags
+ */
+#define PROTOCOL_IS_PULSE_DISTANCE      0x00
+#define PROTOCOL_IS_PULSE_DISTANCE_WIDTH 0x00 // can often successfully be decoded as pulse distance
+#define PROTOCOL_IS_PULSE_WIDTH         0x10
+#define PROTOCOL_IS_PULSE_WIDTH_MASK    PROTOCOL_IS_PULSE_WIDTH
+#define SUPPRESS_STOP_BIT               0x20 // Stop bit is otherwise sent for all pulse distance protocols, i.e. aOneSpaceMicros != aZeroSpaceMicros.
+#define PROTOCOL_IS_MSB_FIRST           IRDATA_FLAGS_IS_MSB_FIRST
+#define PROTOCOL_IS_LSB_FIRST           IRDATA_FLAGS_IS_LSB_FIRST
+#define PROTOCOL_IS_MSB_MASK            IRDATA_FLAGS_IS_MSB_FIRST
 
 <img width="1227" height="758" alt="image" src="https://github.com/user-attachments/assets/fc94c84f-abf2-43f7-bd2c-1d3eecc28a72" /> \
 
