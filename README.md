@@ -7,3 +7,6 @@ Code for Sending LG protocol
 
 sendPulseDistanceWidth_P \
 sendPulseDistanceWidth_P(&LGProtocolConstants, computeLGRawDataAndChecksum(aAddress, aCommand), LG_BITS, aNumberOfRepeats); \
+
+<img width="1227" height="758" alt="image" src="https://github.com/user-attachments/assets/fc94c84f-abf2-43f7-bd2c-1d3eecc28a72" />
+
