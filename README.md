@@ -8,5 +8,9 @@ Code for Sending LG protocol
 sendPulseDistanceWidth_P \
 sendPulseDistanceWidth_P(&LGProtocolConstants, computeLGRawDataAndChecksum(aAddress, aCommand), LG_BITS, aNumberOfRepeats); \
 
-<img width="1227" height="758" alt="image" src="https://github.com/user-attachments/assets/fc94c84f-abf2-43f7-bd2c-1d3eecc28a72" />
+<img width="1227" height="758" alt="image" src="https://github.com/user-attachments/assets/fc94c84f-abf2-43f7-bd2c-1d3eecc28a72" /> \
+
+Send Misubishi
+<img width="972" height="469" alt="image" src="https://github.com/user-attachments/assets/1c29a816-de8d-4a00-9b38-9eba6634133a" />
+
 
