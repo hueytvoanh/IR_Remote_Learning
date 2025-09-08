@@ -10,6 +10,7 @@ sendPulseDistanceWidth_P(&LGProtocolConstants, computeLGRawDataAndChecksum(aAddr
 
 <img width="1072" height="283" alt="image" src="https://github.com/user-attachments/assets/dda2d1be-512c-48d2-a2f6-53507bf37337" />
 
+https://github.com/Arduino-IRremote/Arduino-IRremote/blob/ee3b9cd8dab1ed61b7d8555b712dbe4a0573a544/src/IRProtocol.h#L161
 
 <img width="1227" height="758" alt="image" src="https://github.com/user-attachments/assets/fc94c84f-abf2-43f7-bd2c-1d3eecc28a72" /> \
 
