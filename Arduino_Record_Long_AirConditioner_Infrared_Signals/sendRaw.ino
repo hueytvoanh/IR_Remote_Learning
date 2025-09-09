@@ -30,6 +30,14 @@ unsigned int sendbuf2[] = {
     512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
     488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
   }; 
+
+ unsigned int rawData1[] = {
+    3168, 9856, 512, 1592, 492, 528, 536, 516, 484, 548, 520, 1548,
+    488, 552, 516, 516, 512, 520, 516, 1552, 516, 1556, 488, 552,
+    484, 548, 488, 548, 484, 544, 520, 516, 484, 548, 484, 548,
+    512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
+    488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
+  };
  
 void loop() {
  /*
@@ -38,7 +46,12 @@ void loop() {
   testRaw("RAW2", sendbuf2, sizeof(sendbuf2)/sizeof(int));
   delay(5000);
   */
-   testRaw("rawData", rawData, sizeof(rawData)/sizeof(int));
+   //testRaw("rawData", rawData, sizeof(rawData)/sizeof(int));
+
+   //IrSender.sendRaw(rawData1, sizeof(rawData1) / sizeof(rawData1[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
+ irsend.sendRaw(rawData1, sizeof(rawData1) / sizeof(rawData1[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
+
+    delay(20000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
 }
 
 void testRaw(char *label, unsigned int *rawbuf, int rawlen) {
