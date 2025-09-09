@@ -38,6 +38,22 @@ unsigned int sendbuf2[] = {
     512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
     488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
   };
+
+unsigned int rawData_ON[] = {
+  3368, 9848, 500, 1584, 504, 528, 504, 528, 504, 532, 500, 1560,
+  504, 540, 500, 532, 500, 532, 500, 532, 500, 532, 500, 532,
+  500, 532, 500, 532, 500, 532, 500, 532, 504, 536, 500, 1564,
+  504, 536, 500, 1572, 492, 548, 500, 532, 500, 1572, 504, 532,
+  500, 528, 504, 1572, 500, 1564, 496, 1580, 504, 532, 500
+};
+
+unsigned int rawData_OFF[] = {
+  3152, 9860, 528, 1576, 500, 536, 504, 528, 504, 532, 500, 1564,
+  500, 540, 500, 532, 500, 532, 500, 1564, 500, 1572, 500, 540,
+  504, 528, 500, 532, 500, 532, 504, 528, 504, 528, 504, 528,
+  504, 540, 500, 536, 504, 528, 504, 528, 504, 1572, 500, 532,
+  500, 1572, 500, 540, 500, 540, 500, 532, 500, 1572
+};
  
 void loop() {
  /*
@@ -49,7 +65,12 @@ void loop() {
    //testRaw("rawData", rawData, sizeof(rawData)/sizeof(int));
 
    //IrSender.sendRaw(rawData1, sizeof(rawData1) / sizeof(rawData1[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
- irsend.sendRaw(rawData1, sizeof(rawData1) / sizeof(rawData1[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
+ irsend.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
+
+    delay(20000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
+
+ 
+ irsend.sendRaw(rawData_OFF, sizeof(rawData_OFF) / sizeof(rawData_OFF[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
 
     delay(20000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
 }
