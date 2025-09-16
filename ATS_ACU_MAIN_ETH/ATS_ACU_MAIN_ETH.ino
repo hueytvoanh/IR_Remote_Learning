@@ -4,6 +4,7 @@
 #include <avr/wdt.h>
 
 #include <IRremote.hpp>
+#define AC_NAME              "LG"
 #define IR_SEND_PINN         4        
 #define IR_RECEIVE_PIN       3       
 //IRsend irsend;
@@ -66,7 +67,8 @@ int IRCurrentControl;
 #define LED7_GSM_CODE_E8      21
 #define LED7_AC_OK            22
 #define LED7_AC_NOK           23
-#define LED7_GSM_SMS_ERROR    24       
+#define LED7_GSM_SMS_ERROR    24 
+#define LED7_LG               25       
 
 #define AC_DISABLE            HIGH
 
@@ -242,11 +244,11 @@ byte publishPacket_IU[ 56] =
 
 ///////////////////////////////////////////////////////////////////////////////////////////////MQTT///////////////////////////////////////////////////////////////////////////////////////////////
  unsigned int rawData_ON[] = {
-    3168, 9856, 512, 1592, 492, 528, 536, 516, 484, 548, 520, 1548,
-    488, 552, 516, 516, 512, 520, 516, 1552, 516, 1556, 488, 552,
-    484, 548, 488, 548, 484, 544, 520, 516, 484, 548, 484, 548,
-    512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
-    488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
+    3368, 9848, 500, 1584, 504, 528, 504, 528, 504, 532, 500, 1560,
+  504, 540, 500, 532, 500, 532, 500, 532, 500, 532, 500, 532,
+  500, 532, 500, 532, 500, 532, 500, 532, 504, 536, 500, 1564,
+  504, 536, 500, 1572, 492, 548, 500, 532, 500, 1572, 504, 532,
+  500, 528, 504, 1572, 500, 1564, 496, 1580, 504, 532, 500
   };
 
  unsigned int rawData_OFF[] = {
@@ -258,19 +260,18 @@ byte publishPacket_IU[ 56] =
   };
 
  unsigned int rawData_AUTO[] = {
-    3168, 9856, 512, 1592, 492, 528, 536, 516, 484, 548, 520, 1548,
-    488, 552, 516, 516, 512, 520, 516, 1552, 516, 1556, 488, 552,
-    484, 548, 488, 548, 484, 544, 520, 516, 484, 548, 484, 548,
-    512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
-    488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
+    3160, 9880, 496, 1596, 500, 532, 476, 556, 504, 528, 504, 1548, 524, 536, 504, 528,
+  504, 528, 504, 528, 504, 528, 508, 524, 504, 540, 504, 1560, 500, 520, 520, 1564,
+  500, 1564, 500, 528, 524, 528, 500, 1564, 500, 540, 500, 524, 520, 1576, 504, 528,
+  504, 1560, 500, 532, 504, 528, 504, 1572, 500, 536, 504
   };
 
  unsigned int rawData_FAN[] = {
-    3168, 9856, 512, 1592, 492, 528, 536, 516, 484, 548, 520, 1548,
-    488, 552, 516, 516, 512, 520, 516, 1552, 516, 1556, 488, 552,
-    484, 548, 488, 548, 484, 544, 520, 516, 484, 548, 484, 548,
-    512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
-    488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
+    3108, 9868, 496, 1580, 504, 524, 520, 540, 504, 532, 500, 1576,
+  504, 500, 540, 532, 496, 536, 500, 532, 476, 556, 476, 556, 504, 516,
+  520, 1576, 500, 532, 504, 1572, 476, 572, 500, 524, 508, 536, 496, 1564,
+  504, 1560, 500, 540, 504, 1568, 476, 560, 500, 528, 504, 528, 500, 536,
+  472, 556, 476, 1592, 500
   };
 
   
@@ -1183,6 +1184,12 @@ void displayLed7(float dataIn, int type){
        led_10 = 15;
        led_1 = 15;
        led_dot = 15; 
+       break;
+    case LED7_LG:
+       led_100 = 13;
+       led_10 = 9;
+       led_1 = 11;
+       led_dot = 11; 
        break;
        
   default: 
@@ -2272,7 +2279,7 @@ int mqttUploadTaskFunction( ) {
  void sendUartData(){
     String uartString = "";
     //uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + ",IR_COOL" +",CAMAU_1";
-    uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + "," + IrCode +",CAMAU_1";
+    uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + "," + IrCode +",CAMAU_1" + "," + String(AC_NAME);
     delay(100);
     switch (uartState) {
       case UART_WAIT: 
@@ -2343,7 +2350,7 @@ void controlIR(){
             delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal        
             IRCurrentControl = IR_AUTO;
             IrCode = "IR_AUTO";
-            Serial.println("IR ----------------------------------------------------------------------------------- AUTO");
+            Serial.println("IR AUTO");
         }
         
     }
@@ -2355,7 +2362,7 @@ void controlIR(){
             delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
             IRCurrentControl = IR_FAN;                
             IrCode = "IR_FAN";        
-            Serial.println("IR -------------------------------------------------------------------------------------- FAN");
+            Serial.println("IR FAN");
         }
     }
 
@@ -2365,7 +2372,7 @@ void controlIR(){
             delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
             IRCurrentControl = IR_DRY;  
             IrCode = "IR_DRY";          
-            Serial.println("IR ----------------------------------------------------------------------------------------- DRY");
+            Serial.println("IR DRY");
         }
     }
 
@@ -2376,7 +2383,7 @@ void controlIR(){
            acStatus = false;
            IRCurrentControl = IR_OFF; 
             IrCode = "IR_OFF";          
-           Serial.println("IR -------------------------------------------------------------------------------------------- OFF");
+           Serial.println("IR OFF");
        }
     }
     
@@ -2400,24 +2407,13 @@ void setup() {
   pulsecount = 0;
   setupCount = 0;
   acStatus = true;
-
-  IRCurrentControl = IR_NONE;
-  IrCode = "IR_NONE";
-  IrSender.begin(IR_SEND_PINN);
-
-  #ifdef ETH_FUNCTION
+  
+    #ifdef ETH_FUNCTION
   Serial.begin(9600);
   uartState = UART_WAIT;
   lastUploadTime = millis();
   #endif
-
-  #ifdef ACCOUNT_ADMIN
-  vinaNetwork = false;
-  #else
-  vinaNetwork = true;
-  #endif
   
-  phone2Exist = false, phone3Exist = false;    
   setUpState = SETUP_NONE;
   systemState = SYS_MQTT_CONNECT_AT;
   
@@ -2425,6 +2421,12 @@ void setup() {
   readROMData();
 
   #ifdef GSM_FUNCTION
+  phone2Exist = false, phone3Exist = false; 
+  #ifdef ACCOUNT_ADMIN
+  vinaNetwork = false;
+  #else
+  vinaNetwork = true;
+  #endif
   delay_ms(20000);
   Gsm_Init();
   #endif
@@ -2436,7 +2438,17 @@ void setup() {
   GsmMakeSmsChar(msgChar); 
   #endif
 
-  
+  #ifdef IR_FUNCTION
+  IRCurrentControl = IR_NONE;
+  IrCode = "IR_NONE";
+  IrSender.begin(IR_SEND_PINN);
+  for(int i = 0; i < LED7_HZ_LONG; i++){
+     displayLed7(11.1, LED7_LG);
+  }
+  //delay(5000);
+  IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ);      
+  delay(10000); // Delay > 8 ms
+  #endif
 }
 
 void loop() {
