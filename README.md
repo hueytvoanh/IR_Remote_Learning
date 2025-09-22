@@ -1,3 +1,17 @@
+# IR Remote Learning
+
+     1. Header \
+        HDR_MARK 
+        HDR_SPACE
+     2. Data \
+        HVAC_MITSUBISHI_BIT_MARK
+        HVAC_MITSUBISHI_ONE_SPACE
+        HVAC_MISTUBISHI_ZERO_SPACE
+
+     3. Retransmission
+        HVAC_MITSUBISHI_RPT_MARK
+        HVAC_MITSUBISHI_RPT_SPACE
+
 https://github.com/Arduino-IRremote/Arduino-IRremote/tree/master/examples/SendLGAirConditionerDemo
 
 https://github.com/r45635/HVAC-IR-Control/tree/master
