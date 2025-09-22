@@ -29,3 +29,17 @@ Raw: (59) 3412, -9808, 508, -1592, 544, -512, 496, -556, 484, -548, 484, -1584, 
 1000 1000 0000 1000 0011 0101 0000 
 8808350
 
+ON
+rotocol=PulseDistance, Raw-Data=0x7A90011, 28 bits, LSB first, Gap=3276750us, Duration=51500us
+Send on a 8 bit platform with: IrSender.sendPulseDistanceWidth(38, 3300, 9800, 450, 1550, 450, 550, 0x7A90011, 28, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3300, 9800, 450, 1550, 450, 550
+Store new sDecodedRawDataArray[0]=0x7A90011
+
+OFF
+Protocol=PulseDistance, Raw-Data=0x8A00311, 28 bits, LSB first, Gap=3276750us, Duration=49300us
+Send on a 8 bit platform with: IrSender.sendPulseDistanceWidth(38, 3150, 9750, 500, 1600, 500, 550, 0x8A00311, 28, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3150, 9750, 500, 1600, 500, 550
+Store new sDecodedRawDataArray[0]=0x8A00311
+
+
+
