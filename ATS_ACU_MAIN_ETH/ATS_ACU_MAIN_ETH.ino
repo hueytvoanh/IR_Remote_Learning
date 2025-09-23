@@ -4,6 +4,8 @@
 #include <avr/wdt.h>
 
 #include <IRremote.hpp>
+#define USER_NAME            "admin"
+#define ATS_NAME             "CAMAU_1"
 #define AC_NAME              "LG"
 #define IR_SEND_PINN         4        
 #define IR_RECEIVE_PIN       3       
@@ -128,6 +130,7 @@ int IRCurrentControl;
 
 //#define DEBUG
 //#define DEBUG_GSM
+#define IR_TEST
 #define GSM_SMS_ERROR
 
 #define SMS_WARNING
@@ -243,6 +246,9 @@ byte publishPacket_IU[ 56] =
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////MQTT///////////////////////////////////////////////////////////////////////////////////////////////
+const uint32_t ON_COMMAND  = 0x7A90011;
+const uint32_t OFF_COMMAND = 0x8A00311;
+
  unsigned int rawData_ON[] = {
     3368, 9848, 500, 1584, 504, 528, 504, 528, 504, 532, 500, 1560,
   504, 540, 500, 532, 500, 532, 500, 532, 500, 532, 500, 532,
@@ -2279,7 +2285,7 @@ int mqttUploadTaskFunction( ) {
  void sendUartData(){
     String uartString = "";
     //uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + ",IR_COOL" +",CAMAU_1";
-    uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + "," + IrCode +",CAMAU_1" + "," + String(AC_NAME);
+    uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + "," + IrCode + "," + String(AC_NAME) + "," + String(ATS_NAME) + "," + String(USER_NAME) ;
     delay(100);
     switch (uartState) {
       case UART_WAIT: 
@@ -2408,7 +2414,7 @@ void setup() {
   setupCount = 0;
   acStatus = true;
   
-    #ifdef ETH_FUNCTION
+  #ifdef ETH_FUNCTION
   Serial.begin(9600);
   uartState = UART_WAIT;
   lastUploadTime = millis();
@@ -2446,8 +2452,20 @@ void setup() {
      displayLed7(11.1, LED7_LG);
   }
   //delay(5000);
-  IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ);      
-  delay(10000); // Delay > 8 ms
+  //IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ);      
+  //delay(10000); // Delay > 8 ms
+  #endif
+
+  
+  #ifdef IR_TEST
+  IrSender.sendPulseDistanceWidth(38, 3300, 9800, 450, 1550, 450, 550, ON_COMMAND, 28, PROTOCOL_IS_LSB_FIRST, 500, 0);
+  delay(20000);
+  IrSender.sendPulseDistanceWidth(38, 3150, 9750, 500, 1600, 500, 550, OFF_COMMAND, 28, PROTOCOL_IS_LSB_FIRST, 500, 0);
+  delay(20000);
+  IrSender.sendPulseDistanceWidth(38, 3300, 9800, 450, 1550, 450, 550, ON_COMMAND, 28, PROTOCOL_IS_LSB_FIRST, 500, 0);
+  delay(20000);
+  IrSender.sendPulseDistanceWidth(38, 3150, 9750, 500, 1600, 500, 550, OFF_COMMAND, 28, PROTOCOL_IS_LSB_FIRST, 500, 0);
+  delay(20000);
   #endif
 }
 
