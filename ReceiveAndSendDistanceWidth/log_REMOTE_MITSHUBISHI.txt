@@ -1,0 +1,63 @@
+
+MODE DRY 25 DO 
+Protocol=PulseDistance, Raw-Data=0x8A7598, 88 bits, LSB first, Gap=3276750us, Duration=109900us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0x8A7598};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1600, 400, 1200, 400, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3200, 1600, 400, 1200, 400, 350
+
+MODE DRY 26 DO
+Protocol=PulseDistance, Raw-Data=0x9A6598, 88 bits, LSB first, Gap=3276750us, Duration=110050us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0x9A6598};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1600, 450, 1150, 450, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3200, 1600, 450, 1150, 450, 350
+
+MODE COOL TEMP 25 DO 
+Protocol=PulseDistance, Raw-Data=0x897680, 88 bits, LSB first, Gap=3276750us, Duration=109900us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x7F02FDD9, 0x897680};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 400, 1200, 400, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3200, 1550, 400, 1200, 400, 350
+
+MODE COOL TEMP 26 DO 
+Protocol=PulseDistance, Raw-Data=0x996698, 88 bits, LSB first, Gap=3276750us, Duration=109900us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0x996698};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 400, 1200, 400, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3200, 1550, 400, 1200, 400, 350
+
+MODE COOL TEMP 27 DO
+Protocol=PulseDistance, Raw-Data=0xA95698, 88 bits, LSB first, Gap=3276750us, Duration=109900us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0xA95698};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1600, 400, 1200, 400, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3200, 1600, 400, 1200, 400, 350
+
+MODE COOL TEMP 28 DO
+Protocol=PulseDistance, Raw-Data=0xB94698, 88 bits, LSB first, Gap=3276750us, Duration=110050us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3250, 1550, 400, 1200, 400, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3250, 1550, 400, 1200, 400, 350
+
+MODE COOL TEMP 29 DO 
+Protocol=PulseDistance, Raw-Data=0xC93698, 88 bits, LSB first, Gap=3276750us, Duration=110000us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Timing did not change, so we can reuse already stored timing info.
+
+MODE OFF
+Protocol=PulseDistance, Raw-Data=0xB14E98, 88 bits, LSB first, Gap=3276750us, Duration=110000us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0xB14E98};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3250, 1500, 450, 1150, 450, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3250, 1500, 450, 1150, 450, 350
+
+MODE ON 
+Protocol=PulseDistance, Raw-Data=0xB94698, 88 bits, LSB first, Gap=3276750us, Duration=110000us
+Send on a 8 bit platform with: 
+  uint32_t tRawData[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData[0], 88, PROTOCOL_IS_LSB_FIRST, <RepeatPeriodMillis>, <numberOfRepeats>);
+Store new timing info data=3200, 1550, 450, 1150, 450, 350
