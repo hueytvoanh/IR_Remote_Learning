@@ -249,15 +249,15 @@ byte publishPacket_IU[ 56] =
 //IrSender.sendPulseDistanceWidthFromArray(IR_KHZ, HEADER_MARK, HEADER_SPACE, BIT_MARK, ONE_SPACE, ZERO_SPACE, IR_GAP, &tRawData[0], DATA_BITS, IR_PROTOCOL, IR_REPEAT_MS, IR_REPEAT_NO);
 #ifdef AC_MISUBISHI
 #define IR_KHZ                     38 
-#define HEADER_MARK                3140           //Log 3200//IRremote8266 3140
-#define HEADER_SPACE               1630           //Log 1550//IRremote8266 1630
-#define ONE_MARK                   370            //Log 450//IRremote8266 370
-#define ONE_SPACE                  1220           //Log 1200//IRremote8266 420
-#define ZERO_MARK                  370            //Log 450//IRremote8266 370
+#define HEADER_MARK                3200           //Log 3200//IRremote8266 3140
+#define HEADER_SPACE               1600           //Log 1550//IRremote8266 1630
+#define ONE_MARK                   400            //Log 450//IRremote8266 370
+#define ONE_SPACE                  1200           //Log 1200//IRremote8266 420
+#define ZERO_MARK                  400            //Log 450//IRremote8266 370
 #define ZERO_SPACE                 350            //Log 350//IRremote8266 350
 #define DATA_BITS                  88
 #define IR_PROTOCOL                PROTOCOL_IS_LSB_FIRST      
-#define IR_REPEAT_MS               500
+#define IR_REPEAT_MS               0
 #define IR_REPEAT_NO               0
 
 //uint32_t tRawData_ON[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
@@ -2545,7 +2545,7 @@ void setup() {
   //IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ);      
   //IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
   IrSender.sendPulseDistanceWidthFromArray(IR_KHZ, HEADER_MARK, HEADER_SPACE, ONE_MARK, ONE_SPACE, ZERO_MARK, ZERO_SPACE, &tRawData_ON[0], DATA_BITS, IR_PROTOCOL, IR_REPEAT_MS, IR_REPEAT_NO);
-  delay(10000); // Delay > 8 ms
+  delay(20000); // Delay > 8 ms
   //IrSender.sendPulseDistanceWidthFromArray(IR_KHZ, HEADER_MARK, HEADER_SPACE, ONE_MARK, ONE_SPACE, ZERO_MARK, ZERO_SPACE, &tRawData_OFF[0], DATA_BITS, IR_PROTOCOL, IR_REPEAT_MS, IR_REPEAT_NO);
   //delay(10000); // Delay > 8 ms  
   //IrSender.sendPulseDistanceWidthFromArray(IR_KHZ, HEADER_MARK, HEADER_SPACE, ONE_MARK, ONE_SPACE, ZERO_MARK, ZERO_SPACE, &tRawData_ON[0], DATA_BITS, IR_PROTOCOL, IR_REPEAT_MS, IR_REPEAT_NO);
