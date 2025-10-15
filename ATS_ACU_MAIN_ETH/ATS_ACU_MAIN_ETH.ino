@@ -127,8 +127,8 @@ int IRCurrentControl;
 //#define GSM_FUNCTION
 #define ETH_FUNCTION
 #define IR_FUNCTION
-//#define AC_MISUBISHI
-#define AC_LG
+#define AC_MISUBISHI
+//#define AC_LG
 
 //#define DEBUG
 //#define DEBUG_GSM
@@ -251,9 +251,9 @@ byte publishPacket_IU[ 56] =
 #define IR_KHZ                     38 
 #define HEADER_MARK                3140           //Log 3200//IRremote8266 3140
 #define HEADER_SPACE               1630           //Log 1550//IRremote8266 1630
-#define ONE_MASK                   370            //Log 450//IRremote8266 370
+#define ONE_MARK                   370            //Log 450//IRremote8266 370
 #define ONE_SPACE                  1220           //Log 1200//IRremote8266 420
-#define ZERO_MASK                  370            //Log 450//IRremote8266 370
+#define ZERO_MARK                  370            //Log 450//IRremote8266 370
 #define ZERO_SPACE                 350            //Log 350//IRremote8266 350
 #define DATA_BITS                  88
 #define IR_PROTOCOL                PROTOCOL_IS_LSB_FIRST      
@@ -288,8 +288,6 @@ uint32_t tRawData_COOL_29[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
 #define IR_REPEAT_MS               500
 #define IR_REPEAT_NO               0
 
-uint32_t tRawData_ON[]={0x7A90011};
-uint32_t tRawData_OFF[]={0x8A00311};
 
 uint32_t tRawData_DRY_25[]={0x26C3AE52, 0x6700FFD9, 0x8A7598};
 uint32_t tRawData_DRY_26[]={0x26C3AE52, 0x6700FFD9, 0x9A6598};
