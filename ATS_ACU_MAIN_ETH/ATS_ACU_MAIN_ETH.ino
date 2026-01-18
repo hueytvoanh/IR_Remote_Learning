@@ -4,7 +4,9 @@
 #include <avr/wdt.h>
 
 #include <IRremote.hpp>
-#define AC_NAME              "LG"
+#define USER_NAME            "admin"
+#define ATS_NAME             "CAMAU_1"
+#define AC_NAME              "MIT"
 #define IR_SEND_PINN         4        
 #define IR_RECEIVE_PIN       3       
 //IRsend irsend;
@@ -72,12 +74,12 @@ int IRCurrentControl;
 
 #define AC_DISABLE            HIGH
 
-#define LED7_END_SETUP        50
-#define LED7_HZ               50
-#define LED7_HZ_LONG          100
-#define LED7_CONFIG_HL        50
-#define LED7_CONFIG_BEGIN     70
-#define LED7_CONFIG_HZ        15
+#define LED7_END_SETUP        100
+#define LED7_HZ               100
+#define LED7_HZ_LONG          200
+#define LED7_CONFIG_HL        100
+#define LED7_CONFIG_BEGIN     150
+#define LED7_CONFIG_HZ        70
 
 #define RELAY_ACTIVE          HIGH
 #define RELAY_DEACTIVE        LOW
@@ -125,6 +127,10 @@ int IRCurrentControl;
 //#define GSM_FUNCTION
 #define ETH_FUNCTION
 #define IR_FUNCTION
+//#define AC_KENDO
+//#define AC_MISUBISHI
+//#define AC_LG
+#define AC_KOOLMAN
 
 //#define DEBUG
 //#define DEBUG_GSM
@@ -242,60 +248,90 @@ byte publishPacket_IU[ 56] =
 };
 #endif
 
-///////////////////////////////////////////////////////////////////////////////////////////////MQTT///////////////////////////////////////////////////////////////////////////////////////////////
- unsigned int rawData_ON[] = {
-    3368, 9848, 500, 1584, 504, 528, 504, 528, 504, 532, 500, 1560,
-  504, 540, 500, 532, 500, 532, 500, 532, 500, 532, 500, 532,
-  500, 532, 500, 532, 500, 532, 500, 532, 504, 536, 500, 1564,
-  504, 536, 500, 1572, 492, 548, 500, 532, 500, 1572, 504, 532,
-  500, 528, 504, 1572, 500, 1564, 496, 1580, 504, 532, 500
-  };
+//IrSender.sendPulseDistanceWidthFromArray(IR_KHZ, HEADER_MARK, HEADER_SPACE, BIT_MARK, ONE_SPACE, ZERO_SPACE, IR_GAP, &tRawData[0], DATA_BITS, IR_PROTOCOL, IR_REPEAT_MS, IR_REPEAT_NO);
+#ifdef AC_MISUBISHI
+#define IR_KHZ                     38 
+#define HEADER_MARK                3200           //Log 3200//IRremote8266 3140
+#define HEADER_SPACE               1600           //Log 1550//IRremote8266 1630
+#define ONE_MARK                   400            //Log 450//IRremote8266 370
+#define ONE_SPACE                  1200           //Log 1200//IRremote8266 420
+#define ZERO_MARK                  400            //Log 450//IRremote8266 370
+#define ZERO_SPACE                 350            //Log 350//IRremote8266 350
+#define DATA_BITS                  88
+#define IR_PROTOCOL                PROTOCOL_IS_LSB_FIRST      
+#define IR_REPEAT_MS               0
+#define IR_REPEAT_NO               0
 
- unsigned int rawData_OFF[] = {
-    3168, 9856, 512, 1592, 492, 528, 536, 516, 484, 548, 520, 1548,
-    488, 552, 516, 516, 512, 520, 516, 1552, 516, 1556, 488, 552,
-    484, 548, 488, 548, 484, 544, 520, 516, 484, 548, 484, 548,
-    512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
-    488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
-  };
+//uint32_t tRawData_ON[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
+uint32_t tRawData_ON[]={0x26C3AE52, 0x7F02FDD9, 0xC93680};
+//uint32_t tRawData_OFF[]={0x26C3AE52, 0x6700FFD9, 0xB14E98};
 
- unsigned int rawData_AUTO[] = {
-    3160, 9880, 496, 1596, 500, 532, 476, 556, 504, 528, 504, 1548, 524, 536, 504, 528,
-  504, 528, 504, 528, 504, 528, 508, 524, 504, 540, 504, 1560, 500, 520, 520, 1564,
-  500, 1564, 500, 528, 524, 528, 500, 1564, 500, 540, 500, 524, 520, 1576, 504, 528,
-  504, 1560, 500, 532, 504, 528, 504, 1572, 500, 536, 504
-  };
+uint32_t tRawData_OFF[]={0x26C3AE52, 0x7F02FDD9, 0xC13E80};
 
- unsigned int rawData_FAN[] = {
-    3108, 9868, 496, 1580, 504, 524, 520, 540, 504, 532, 500, 1576,
-  504, 500, 540, 532, 496, 536, 500, 532, 476, 556, 476, 556, 504, 516,
-  520, 1576, 500, 532, 504, 1572, 476, 572, 500, 524, 508, 536, 496, 1564,
-  504, 1560, 500, 540, 504, 1568, 476, 560, 500, 528, 504, 528, 500, 536,
-  472, 556, 476, 1592, 500
-  };
+uint32_t tRawData_DRY_25[]={0x26C3AE52, 0x6700FFD9, 0x8A7598};
+uint32_t tRawData_DRY_26[]={0x26C3AE52, 0x6700FFD9, 0x9A6598};
+uint32_t tRawData_COOL_25[]={0x26C3AE52, 0x7F02FDD9, 0x897680};
+uint32_t tRawData_COOL_26[]={0x26C3AE52, 0x6700FFD9, 0x996698};
+uint32_t tRawData_COOL_27[]={0x26C3AE52, 0x6700FFD9, 0xA95698};
+uint32_t tRawData_COOL_28[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
+uint32_t tRawData_COOL_29[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
+#endif
 
-  
- unsigned int rawData_DRY[] = {
-    3168, 9856, 512, 1592, 492, 528, 536, 516, 484, 548, 520, 1548,
-    488, 552, 516, 516, 512, 520, 516, 1552, 516, 1556, 488, 552,
-    484, 548, 488, 548, 484, 544, 520, 516, 484, 548, 484, 548,
-    512, 528, 516, 524, 516, 520, 484, 548, 484, 1588, 484, 548,
-    488, 1588, 508, 532, 484, 556, 512, 520, 484, 1592, 512
-  };
-///////////////////////////////////////////////////////////////////////////////////////////////IR IR IR ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef AC_LG
+#define IR_KHZ                     38 
+#define HEADER_MARK                3200
+#define HEADER_SPACE               9800           // 1600
+#define ONE_MARK                   450            //400
+#define ONE_SPACE                  1600           //1150
+#define ZERO_MARK                  450
+#define ZERO_SPACE                 550
+#define DATA_BITS                  28
+#define IR_PROTOCOL                PROTOCOL_IS_LSB_FIRST      
+#define IR_REPEAT_MS               500
+#define IR_REPEAT_NO               0
+
+
+uint32_t tRawData_DRY_25[]={0x26C3AE52, 0x6700FFD9, 0x8A7598};
+uint32_t tRawData_DRY_26[]={0x26C3AE52, 0x6700FFD9, 0x9A6598};
+uint32_t tRawData_COOL_25[]={0x26C3AE52, 0x7F02FDD9, 0x897680};
+uint32_t tRawData_COOL_26[]={0x26C3AE52, 0x6700FFD9, 0x996698};
+uint32_t tRawData_COOL_27[]={0x26C3AE52, 0x6700FFD9, 0xA95698};
+uint32_t tRawData_COOL_28[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
+uint32_t tRawData_COOL_29[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
+#endif
+
+
+#ifdef AC_KENDO
+uint32_t tRawData_ON[]={0x126CB23, 0x6032400, 0x45, 0x8700};
+uint32_t tRawData_OFF[]={0x126CB23, 0x6032000, 0x45, 0x8300};
+uint32_t tRawData_COOL_25[]={0x126CB23, 0x6032400, 0x5, 0x4700};
+uint32_t tRawData_COOL_27[]={0x126CB23, 0x4032400, 0x5, 0x4500};
+#endif
+
+
+
+#ifdef AC_KOOLMAN
+uint32_t tRawData_ON[]={0xE087C3, 0x8000A0, 0x5003000, 0x7F};
+uint32_t tRawData_OFF[]={0xE087C3, 0xC000A0, 0x5000000, 0x8F};
+uint32_t tRawData_COOL_25[]={0xE08FC3, 0x200020, 0x1002000, 0x93};
+uint32_t tRawData_COOL_27[]={0xE09FC3, 0x200020, 0x4002000, 0xA6};
+#endif
+
+
 String IrCode;
 unsigned long lastIRSendTime = 0;
-const unsigned long irInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+//const unsigned long irInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+const unsigned long irInterval = 5UL * 60UL * 1000UL;
 int pulsecount;
 unsigned long nowAc, previousAc;
 
 const char string_0[SMSLENGTH] PROGMEM = "START";
-    const char string_1[SMSLENGTH] PROGMEM = "Canh bao. Mat dien luoi \n";
-    const char string_2[SMSLENGTH] PROGMEM = "Vbat||Ddien||Tmp||AC \n" 
+const char string_1[SMSLENGTH] PROGMEM = "Canh bao. Mat dien luoi \n";
+const char string_2[SMSLENGTH] PROGMEM = "Vbat||Ddien||Tmp||AC \n" 
                                              "15.5||15.5||55.5||NOK||DOOR ----- \n";
-    const char string_3[SMSLENGTH] PROGMEM = "ADDED PHONE2 xxxxxxxxxx \n";
-    const char string_4[SMSLENGTH] PROGMEM = "ADDED PHONE3 xxxxxxxxxx \n"; 
-    const char* const string_table[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
+const char string_3[SMSLENGTH] PROGMEM = "ADDED PHONE2 xxxxxxxxxx \n";
+const char string_4[SMSLENGTH] PROGMEM = "ADDED PHONE3 xxxxxxxxxx \n"; 
+const char* const string_table[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
 
 byte nump[] = {
  B11111100, // Zero
@@ -308,18 +344,18 @@ byte nump[] = {
  B11100000, // Seven
  B11111110, // Eight
  B11110110, // Nine
- B11111111, // None
+ B00000000, // None
  B00000010, // -
  B11000110, // TMP 12 
  B00011100, // L   
  B00111010, // o    14
- B10110111, // s
- B10110111, // s    16
- B01101111, // H    
- B00011101, // L    18      
+ B10110110, // s
+ B10110110, // s    16
+ B01101110, // H    
+ B00011100, // L    18      
  B11101110, // A   
  B01111100, // U    20   
- B10011111, // E    21    
+ B10011110, // E    21    
  B10011100, // C    22                  
 };
 
@@ -1129,43 +1165,43 @@ void displayLed7(float dataIn, int type){
        led_100 = 21;
        led_10 = 1;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_GSM_CODE_E2:
        led_100 = 21;
        led_10 = 2;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_GSM_CODE_E3:
        led_100 = 21;
        led_10 = 3;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_GSM_CODE_E4:
        led_100 = 21;
        led_10 = 4;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_GSM_CODE_E5:
        led_100 = 21;
        led_10 = 5;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_GSM_CODE_E6:
        led_100 = 21;
        led_10 = 6;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_GSM_CODE_E7:
        led_100 = 21;
        led_10 = 7;
        led_1 = 10;
-       led_dot = 10; 
+       led_dot = 11; 
        break;
     case LED7_AC_OK:
        led_100 = 19;
@@ -1188,7 +1224,7 @@ void displayLed7(float dataIn, int type){
     case LED7_LG:
        led_100 = 13;
        led_10 = 9;
-       led_1 = 11;
+       led_1 = 10;
        led_dot = 11; 
        break;
        
@@ -1450,11 +1486,14 @@ int checkInputButtons(){
     //char acq_H_value, acq_L_value, temp_H_value, temp_L_value;
 
     if(digitalRead(MENU_BUTTON)==LOW){
-        for(int i = 0; i < LED7_CONFIG_BEGIN; i++){
-             displayLed7(vAcq_L_Config, LED7_ACQ_L);  
+        delay(2000);
+        if(digitalRead(MENU_BUTTON)==LOW){
+            for(int i = 0; i < LED7_CONFIG_BEGIN; i++){
+                displayLed7(vAcq_L_Config, LED7_ACQ_L);  
+            }
+            setUpState = SETUP_ACQ_LOW;
+            setupCount = 0;
         }
-        setUpState = SETUP_ACQ_LOW;
-        setupCount = 0;
     }
 
    while( setUpState != SETUP_NONE){
@@ -2278,8 +2317,15 @@ int mqttUploadTaskFunction( ) {
 
  void sendUartData(){
     String uartString = "";
+    String mainStatusString;
+    if(mainState == true){
+          mainStatusString = ",OK";
+    }
+    else{
+         mainStatusString = ",NOK";
+    }
     //uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + ",IR_COOL" +",CAMAU_1";
-    uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + ",OK" + "," + IrCode +",CAMAU_1" + "," + String(AC_NAME);
+    uartString = "ATS" + String(tempValue) + "," + String(acqValue) + ","  + String(currentValue) + ",54.4" + mainStatusString + "," + IrCode + "," + String(AC_NAME) + "," + String(ATS_NAME) + "," + String(USER_NAME) ;
     delay(100);
     switch (uartState) {
       case UART_WAIT: 
@@ -2314,6 +2360,7 @@ int mqttUploadTaskFunction( ) {
         Serial.print("Received: ");
         Serial.println(incomingMessage);
     }
+    Serial.flush();
 }
 
 void controlIR(){
@@ -2336,58 +2383,147 @@ void controlIR(){
     */
    unsigned long IrCurrentTime = millis();
     
-    if (tempValue > 30) {
+    if (tempValue > 31) {
          // Check if 5 minutes have passed since last IR send
         if (IrCurrentTime - lastIRSendTime >= irInterval) {      
-            // Send IR ON signal
-            IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ);      
+            #ifdef AC_MISUBISHI
+            IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif 
+
+            #ifdef AC_KENDO
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+
+            #ifdef AC_KOOLMAN
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+
+            
             lastIRSendTime = IrCurrentTime;
         }
       
-        if(IRCurrentControl != IR_AUTO){      
-            IrSender.sendRaw(rawData_AUTO, sizeof(rawData_AUTO) / sizeof(rawData_AUTO[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
-            delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal        
-            IRCurrentControl = IR_AUTO;
+        if(IRCurrentControl != IR_AUTO){                                     
+            IRCurrentControl = IR_AUTO;            
+            #ifdef AC_MISUBISHI
+            IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_COOL_25[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_COOL_25[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_COOL_25[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+
+            #ifdef AC_KENDO
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+
+            #ifdef AC_KOOLMAN
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+            
             IrCode = "IR_AUTO";
             Serial.println("IR AUTO");
         }
         
     }
-    
-    
-    if((tempValue > 27)&&(tempValue < 29.5)){
-        if(IRCurrentControl != IR_FAN){      
-            IrSender.sendRaw(rawData_FAN, sizeof(rawData_FAN) / sizeof(rawData_FAN[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
-            delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
-            IRCurrentControl = IR_FAN;                
-            IrCode = "IR_FAN";        
-            Serial.println("IR FAN");
-        }
-    }
 
-    if((tempValue > 24)&&(tempValue < 26.5)){
-        if(IRCurrentControl != IR_DRY){     
-            IrSender.sendRaw(rawData_FAN, sizeof(rawData_FAN) / sizeof(rawData_FAN[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
-            delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
-            IRCurrentControl = IR_DRY;  
-            IrCode = "IR_DRY";          
-            Serial.println("IR DRY");
-        }
-    }
-
-    if(tempValue < 22){
+    if(tempValue < 26){
        if(IRCurrentControl != IR_OFF){    
-           IrSender.sendRaw(rawData_OFF, sizeof(rawData_OFF) / sizeof(rawData_OFF[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
-           delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
+           #ifdef AC_MISUBISHI
+           IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_OFF[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+           delay(10000); // Delay > 8 ms
+           IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_OFF[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+           delay(10000); // Delay > 8 ms
+           IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_OFF[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+           delay(10000); // Delay > 8 ms
+           #endif
+
+           #ifdef AC_KENDO
+            IrSender.sendPulseDistanceWidthFromArray(38, 2950, 1750, 400, 1150, 400, 400, &tRawData_OFF[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2950, 1750, 400, 1150, 400, 400, &tRawData_OFF[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2950, 1750, 400, 1150, 400, 400, &tRawData_OFF[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+
+           #ifdef AC_KOOLMAN
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            #endif
+           
            acStatus = false;
            IRCurrentControl = IR_OFF; 
-            IrCode = "IR_OFF";          
+           IrCode = "IR_OFF";          
            Serial.println("IR OFF");
        }
     }
-    
-    
+  
+}
+
+void IrDisplay(){
+    switch(IRCurrentControl){
+      case IR_NONE:
+           for(int i = 0; i < LED7_HZ_LONG; i++){ 
+               displayLed7(99.99, LED7_GSM_CODE_E1);
+           }
+           break; 
+      case IR_OFF:
+           for(int i = 0; i < LED7_HZ_LONG; i++){ 
+               displayLed7(99.99, LED7_GSM_CODE_E2);
+           }
+           break;
+      case IR_AUTO:
+           for(int i = 0; i < LED7_HZ_LONG; i++){ 
+               displayLed7(99.99, LED7_GSM_CODE_E3);
+           }
+           break;
+      case IR_DRY:
+           for(int i = 0; i < LED7_HZ_LONG; i++){ 
+               displayLed7(99.99, LED7_GSM_CODE_E4);
+           }
+           break;
+      default:
+           break;
+    }
+}
+
+void sendIRSignal(uint32_t* rawData, size_t dataLength) {
+    IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, rawData, dataLength, PROTOCOL_IS_LSB_FIRST, 0, 0);
+    delay(15000); // Delay > 8 ms
+    IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, rawData, dataLength, PROTOCOL_IS_LSB_FIRST, 0, 0);
+    delay(15000); // Delay > 8 ms
+    IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, rawData, dataLength, PROTOCOL_IS_LSB_FIRST, 0, 0);
+    delay(15000); // Delay > 8 ms
 }
 
 void setup() {
@@ -2408,7 +2544,7 @@ void setup() {
   setupCount = 0;
   acStatus = true;
   
-    #ifdef ETH_FUNCTION
+  #ifdef ETH_FUNCTION
   Serial.begin(9600);
   uartState = UART_WAIT;
   lastUploadTime = millis();
@@ -2438,15 +2574,38 @@ void setup() {
   GsmMakeSmsChar(msgChar); 
   #endif
 
-  #ifdef IR_FUNCTION
+  
   IRCurrentControl = IR_NONE;
   IrCode = "IR_NONE";
   IrSender.begin(IR_SEND_PINN);
   for(int i = 0; i < LED7_HZ_LONG; i++){
      displayLed7(11.1, LED7_LG);
   }
-  //delay(5000);
-  IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ);      
+  
+  #ifdef AC_MISUBISHI
+  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  #endif
+
+  #ifdef AC_KENDO
+  IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  #endif
+
+  #ifdef AC_KOOLMAN
+  IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+  delay(10000); // Delay > 8 ms
+  IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
   delay(10000); // Delay > 8 ms
   #endif
 }
@@ -2461,6 +2620,7 @@ void loop() {
   displayAcq();
   outSigControl();
   displayTemp();
+  /*
   #ifdef GSM_FUNCTION
   sendSmsTaskFunction();   
   #endif
@@ -2471,10 +2631,16 @@ void loop() {
   serialEvent();
   checkBuff();
   #endif
+  */
+  
   #ifdef ETH_FUNCTION
   sendUartData();
   #endif
+  
   #ifdef IR_FUNCTION
   controlIR();
+  IrDisplay();
   #endif
+  
+  //IrDisplay();
 }
