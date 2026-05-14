@@ -54,4 +54,7 @@ struct PulseDistanceWidthProtocolConstants {
 Send Misubishi
 <img width="972" height="469" alt="image" src="https://github.com/user-attachments/assets/1c29a816-de8d-4a00-9b38-9eba6634133a" />
 
+<img width="371" height="125" alt="image" src="https://github.com/user-attachments/assets/3b3c526f-490a-4968-af01-7a2aa5b47946" />
+
+
 
