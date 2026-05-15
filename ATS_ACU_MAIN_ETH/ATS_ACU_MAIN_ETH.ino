@@ -3,6 +3,7 @@
 #include <String.h> 
 #include <avr/wdt.h>
 
+#include "DYIRDaikin.h"
 #include <IRremote.hpp>
 #define USER_NAME            "admin"
 #define ATS_NAME             "CAMAU_1"
@@ -59,27 +60,34 @@ int IRCurrentControl;
 #define LED7_TEMP_L           11
 #define LED7_SOURCE_10        12
 #define LED7_SOURCE_100       13
-#define LED7_GSM_CODE_E1      14
-#define LED7_GSM_CODE_E2      15
-#define LED7_GSM_CODE_E3      16
-#define LED7_GSM_CODE_E4      17
-#define LED7_GSM_CODE_E5      18
-#define LED7_GSM_CODE_E6      19
-#define LED7_GSM_CODE_E7      20
-#define LED7_GSM_CODE_E8      21
+#define LED7_CODE_E1      14
+#define LED7_CODE_E2      15
+#define LED7_CODE_E3      16
+#define LED7_CODE_E4      17
+#define LED7_CODE_E5      18
+#define LED7_CODE_E6      19
+#define LED7_CODE_E7      20
+#define LED7_CODE_E8      21
 #define LED7_AC_OK            22
 #define LED7_AC_NOK           23
 #define LED7_GSM_SMS_ERROR    24 
-#define LED7_LG               25       
+#define LED7_LG               25    
+#define LED7_MITSUBISHI       26    
+#define LED7_KENDO            27    
+#define LED7_KOOLMAN          28    
+#define LED7_DAIKIN           29    
+#define TYPE_AC_SOURCE        30 
+#define LED7_CODE_COOL        31
+#define LED7_CODE_OFF         32
+
 
 #define AC_DISABLE            HIGH
 
 #define LED7_END_SETUP        100
 #define LED7_HZ               100
 #define LED7_HZ_LONG          200
-#define LED7_CONFIG_HL        100
-#define LED7_CONFIG_BEGIN     150
-#define LED7_CONFIG_HZ        70
+#define LED7_CONFIG_HZ        20
+#define LED7_CONFIG_HZ_LONG   80
 
 #define RELAY_ACTIVE          HIGH
 #define RELAY_DEACTIVE        LOW
@@ -93,6 +101,7 @@ int IRCurrentControl;
 #define SETUP_ACQ_LOW         2
 #define SETUP_TEMP_HIGH       3
 #define SETUP_TEMP_LOW        4
+#define SETUP_AC_TYPE         5
 
 #define AC_NORMAL             0
 #define AC_ON_RELAY           1
@@ -125,12 +134,15 @@ int IRCurrentControl;
 
 //#define MQTT_FUNCTION
 //#define GSM_FUNCTION
-#define ETH_FUNCTION
+//#define ETH_FUNCTION
 #define IR_FUNCTION
-//#define AC_KENDO
-//#define AC_MISUBISHI
-//#define AC_LG
-#define AC_KOOLMAN
+
+#define ACTYPE_KENDO               0 
+#define ACTYPE_MISUBISHI           1
+#define ACTYPE_KOOLMAN             2
+#define ACTYPE_DAIKIN              3
+#define ACTYPE_LG                  4
+
 
 //#define DEBUG
 //#define DEBUG_GSM
@@ -173,7 +185,7 @@ float acqValue = 12.5;
 float currentValue = 5.5;
 char fMenu, fAuto, fTest, but3, scanMc;
 float vThConfig;
-float temp_L_Config, temp_H_Config, vAcq_L_Config, vAcq_H_Config;
+float temp_L_Config, temp_H_Config, vAcq_L_Config, vAcq_H_Config, actype_Config;
 boolean configVoltage;
 char setUpState;
 
@@ -249,33 +261,33 @@ byte publishPacket_IU[ 56] =
 #endif
 
 //IrSender.sendPulseDistanceWidthFromArray(IR_KHZ, HEADER_MARK, HEADER_SPACE, BIT_MARK, ONE_SPACE, ZERO_SPACE, IR_GAP, &tRawData[0], DATA_BITS, IR_PROTOCOL, IR_REPEAT_MS, IR_REPEAT_NO);
-#ifdef AC_MISUBISHI
-#define IR_KHZ                     38 
-#define HEADER_MARK                3200           //Log 3200//IRremote8266 3140
-#define HEADER_SPACE               1600           //Log 1550//IRremote8266 1630
-#define ONE_MARK                   400            //Log 450//IRremote8266 370
-#define ONE_SPACE                  1200           //Log 1200//IRremote8266 420
-#define ZERO_MARK                  400            //Log 450//IRremote8266 370
-#define ZERO_SPACE                 350            //Log 350//IRremote8266 350
-#define DATA_BITS                  88
-#define IR_PROTOCOL                PROTOCOL_IS_LSB_FIRST      
-#define IR_REPEAT_MS               0
-#define IR_REPEAT_NO               0
+//#ifdef AC_MISUBISHI
+#define IR_KHZ_MISUBISHI                     38 
+#define HEADER_MARK_MISUBISHI               3200           //Log 3200//IRremote8266 3140
+#define HEADER_SPACE_MISUBISHI               1600           //Log 1550//IRremote8266 1630
+#define ONE_MARK_MISUBISHI                   400            //Log 450//IRremote8266 370
+#define ONE_SPACE_MISUBISHI                  1200           //Log 1200//IRremote8266 420
+#define ZERO_MARK_MISUBISHI                  400            //Log 450//IRremote8266 370
+#define ZERO_SPACE_MISUBISHI                 350            //Log 350//IRremote8266 350
+#define DATA_BITS_MISUBISHI                  88
+#define IR_PROTOCOL_MISUBISHI                PROTOCOL_IS_LSB_FIRST      
+#define IR_REPEAT_MS_MISUBISHI               0
+#define IR_REPEAT_NO_MISUBISHI               0
 
 //uint32_t tRawData_ON[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
-uint32_t tRawData_ON[]={0x26C3AE52, 0x7F02FDD9, 0xC93680};
+uint32_t tRawData_ON_MISUBISHI[]={0x26C3AE52, 0x7F02FDD9, 0xC93680};
 //uint32_t tRawData_OFF[]={0x26C3AE52, 0x6700FFD9, 0xB14E98};
 
-uint32_t tRawData_OFF[]={0x26C3AE52, 0x7F02FDD9, 0xC13E80};
+uint32_t tRawData_OFF_MISUBISHI[]={0x26C3AE52, 0x7F02FDD9, 0xC13E80};
 
-uint32_t tRawData_DRY_25[]={0x26C3AE52, 0x6700FFD9, 0x8A7598};
-uint32_t tRawData_DRY_26[]={0x26C3AE52, 0x6700FFD9, 0x9A6598};
-uint32_t tRawData_COOL_25[]={0x26C3AE52, 0x7F02FDD9, 0x897680};
-uint32_t tRawData_COOL_26[]={0x26C3AE52, 0x6700FFD9, 0x996698};
-uint32_t tRawData_COOL_27[]={0x26C3AE52, 0x6700FFD9, 0xA95698};
-uint32_t tRawData_COOL_28[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
-uint32_t tRawData_COOL_29[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
-#endif
+uint32_t tRawData_DRY_25_MISUBISHI[]={0x26C3AE52, 0x6700FFD9, 0x8A7598};
+uint32_t tRawData_DRY_26_MISUBISHI[]={0x26C3AE52, 0x6700FFD9, 0x9A6598};
+uint32_t tRawData_COOL_25_MISUBISHI[]={0x26C3AE52, 0x7F02FDD9, 0x897680};
+uint32_t tRawData_COOL_26_MISUBISHI[]={0x26C3AE52, 0x6700FFD9, 0x996698};
+uint32_t tRawData_COOL_27_MISUBISHI[]={0x26C3AE52, 0x6700FFD9, 0xA95698};
+uint32_t tRawData_COOL_28_MISUBISHI[]={0x26C3AE52, 0x6700FFD9, 0xB94698};
+uint32_t tRawData_COOL_29_MISUBISHI[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
+//#endif
 
 #ifdef AC_LG
 #define IR_KHZ                     38 
@@ -301,21 +313,21 @@ uint32_t tRawData_COOL_29[]={0x26C3AE52, 0x6700FFD9, 0xC93698};
 #endif
 
 
-#ifdef AC_KENDO
-uint32_t tRawData_ON[]={0x126CB23, 0x6032400, 0x45, 0x8700};
-uint32_t tRawData_OFF[]={0x126CB23, 0x6032000, 0x45, 0x8300};
-uint32_t tRawData_COOL_25[]={0x126CB23, 0x6032400, 0x5, 0x4700};
-uint32_t tRawData_COOL_27[]={0x126CB23, 0x4032400, 0x5, 0x4500};
-#endif
+//#ifdef AC_KENDO
+uint32_t tRawData_ON_KENDO[]={0x126CB23, 0x6032400, 0x45, 0x8700};
+uint32_t tRawData_OFF_KENDO[]={0x126CB23, 0x6032000, 0x45, 0x8300};
+uint32_t tRawData_COOL_25_KENDO[]={0x126CB23, 0x6032400, 0x5, 0x4700};
+uint32_t tRawData_COOL_27_KENDO[]={0x126CB23, 0x4032400, 0x5, 0x4500};
+//#endif
 
 
 
-#ifdef AC_KOOLMAN
-uint32_t tRawData_ON[]={0xE087C3, 0x8000A0, 0x5003000, 0x7F};
-uint32_t tRawData_OFF[]={0xE087C3, 0xC000A0, 0x5000000, 0x8F};
-uint32_t tRawData_COOL_25[]={0xE08FC3, 0x200020, 0x1002000, 0x93};
-uint32_t tRawData_COOL_27[]={0xE09FC3, 0x200020, 0x4002000, 0xA6};
-#endif
+//#ifdef AC_KOOLMAN
+uint32_t tRawData_ON_KOOLMAN[]={0xE087C3, 0x8000A0, 0x5003000, 0x7F};
+uint32_t tRawData_OFF_KOOLMAN[]={0xE087C3, 0xC000A0, 0x5000000, 0x8F};
+uint32_t tRawData_COOL_25_KOOLMAN[]={0xE08FC3, 0x200020, 0x1002000, 0x93};
+uint32_t tRawData_COOL_27_KOOLMAN[]={0xE09FC3, 0x200020, 0x4002000, 0xA6};
+//#endif
 
 
 String IrCode;
@@ -356,7 +368,9 @@ byte nump[] = {
  B11101110, // A   
  B01111100, // U    20   
  B10011110, // E    21    
- B10011100, // C    22                  
+ B10011100, // C    22      
+ B00001110, //  K    23   
+ B10001110, // F    24                 
 };
 
 byte numD[] = {
@@ -371,6 +385,12 @@ byte numD[] = {
  B11111111, // Eight
  B11110111, // Nine
 };
+
+
+int acType;
+float acOffValue, acOnValue;
+
+DYIRDaikin irdaikin;
 
 
 void ISR_HZ() {
@@ -717,7 +737,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E1);
+                           displayLed7(99.99, LED7_CODE_E1);
                         }
                         #endif
                         Gsm_Init();  
@@ -745,7 +765,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E2);
+                           displayLed7(99.99, LED7_CODE_E2);
                         }
                         #endif
                         Gsm_Init();  
@@ -773,7 +793,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E3);
+                           displayLed7(99.99, LED7_CODE_E3);
                         }
                         #endif
                         Gsm_Init();  
@@ -804,7 +824,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E4);
+                           displayLed7(99.99, LED7_CODE_E4);
                         }
                         #endif
                         Gsm_Init();  
@@ -832,7 +852,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E5);
+                           displayLed7(99.99, LED7_CODE_E5);
                         }
                         #endif
                         Gsm_Init();  
@@ -861,7 +881,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E6);
+                           displayLed7(99.99, LED7_CODE_E6);
                         }
                         #endif
                         Gsm_Init();  
@@ -890,7 +910,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E7);
+                           displayLed7(99.99, LED7_CODE_E7);
                         }
                         #endif
                         Gsm_Init();  
@@ -922,7 +942,7 @@ int checkBuff(){
                     if(networkError >= 3){
                         #ifdef MQTT_STATE_ERROR
                         for(int i = 0; i < 200; i++){ 
-                           displayLed7(99.99, LED7_GSM_CODE_E8);
+                           displayLed7(99.99, LED7_CODE_E8);
                         }
                         #endif
                         Gsm_Init();  
@@ -1129,29 +1149,29 @@ void displayLed7(float dataIn, int type){
 
   case LED7_ACQ_H:
        led_100 = 20;
-       led_10 = 20;
-       led_1 = 17;
+       led_10 = 10;
+       led_1 = 10;
        led_dot = 17; 
        break;
 
     case LED7_ACQ_L:
        led_100 = 20;
-       led_10 = 20;
-       led_1 = 18;
+       led_10 = 10;
+       led_1 = 10;
        led_dot = 18; 
        break;
 
     case LED7_TEMP_H:
        led_100 = 12;
-       led_10 = 12;
-       led_1 = 17;
+       led_10 = 22;
+       led_1 = 10;
        led_dot = 17; 
        break;
 
     case LED7_TEMP_L:
        led_100 = 12;
-       led_10 = 12;
-       led_1 = 18;
+       led_10 = 22;
+       led_1 = 10;
        led_dot = 18; 
        break;
 
@@ -1161,43 +1181,43 @@ void displayLed7(float dataIn, int type){
        led_1 = 11;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E1:
+    case LED7_CODE_E1:
        led_100 = 21;
        led_10 = 1;
        led_1 = 10;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E2:
+    case LED7_CODE_E2:
        led_100 = 21;
        led_10 = 2;
        led_1 = 10;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E3:
+    case LED7_CODE_E3:
        led_100 = 21;
        led_10 = 3;
        led_1 = 10;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E4:
+    case LED7_CODE_E4:
        led_100 = 21;
        led_10 = 4;
        led_1 = 10;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E5:
+    case LED7_CODE_E5:
        led_100 = 21;
        led_10 = 5;
        led_1 = 10;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E6:
+    case LED7_CODE_E6:
        led_100 = 21;
        led_10 = 6;
        led_1 = 10;
        led_dot = 11; 
        break;
-    case LED7_GSM_CODE_E7:
+    case LED7_CODE_E7:
        led_100 = 21;
        led_10 = 7;
        led_1 = 10;
@@ -1227,6 +1247,56 @@ void displayLed7(float dataIn, int type){
        led_1 = 10;
        led_dot = 11; 
        break;
+
+    case LED7_MITSUBISHI:
+       led_100 = 1;
+       led_10 = 1;
+       led_1 = 1;
+       led_dot = 1; 
+       break;
+
+    case LED7_KENDO:
+       led_100 = 23;
+       led_10 = 21;
+       led_1 = 23;
+       led_dot = 21; 
+       break;
+
+    case LED7_KOOLMAN:
+       led_100 = 23;
+       led_10 = 14;
+       led_1 = 14;
+       led_dot = 13; 
+       break;
+
+   case LED7_DAIKIN:
+       led_100 = 8;
+       led_10 = 19;
+       led_1 = 23;
+       led_dot = 1; 
+       break;
+
+   case TYPE_AC_SOURCE:
+       led_100 = 19;
+       led_10 = 22;
+       led_1 = 10;
+       led_dot = actype_Config; 
+   break;
+
+  case LED7_CODE_COOL:
+       led_100 = 22;
+       led_10 = 0;
+       led_1 = 0;
+       led_dot = 18; 
+   break;
+
+   
+  case LED7_CODE_OFF:
+       led_100 = 0;
+       led_10 = 24;
+       led_1 = 24;
+       led_dot = 10; 
+   break;
        
   default: 
        break;
@@ -1488,10 +1558,10 @@ int checkInputButtons(){
     if(digitalRead(MENU_BUTTON)==LOW){
         delay(2000);
         if(digitalRead(MENU_BUTTON)==LOW){
-            for(int i = 0; i < LED7_CONFIG_BEGIN; i++){
-                displayLed7(vAcq_L_Config, LED7_ACQ_L);  
+            for(int i = 0; i < LED7_CONFIG_HZ_LONG; i++){
+                displayLed7(vAcq_L_Config, LED7_TEMP_L);  
             }
-            setUpState = SETUP_ACQ_LOW;
+            setUpState = SETUP_TEMP_LOW;
             setupCount = 0;
         }
     }
@@ -1501,7 +1571,7 @@ int checkInputButtons(){
     switch(setUpState){
         case SETUP_NONE:
             if(digitalRead(MENU_BUTTON)==LOW){
-                for(int i = 0; i < LED7_CONFIG_HL; i++){
+                for(int i = 0; i < LED7_CONFIG_HZ; i++){
                     displayLed7(vAcq_L_Config, LED7_ACQ_L);  
                 }
                 setUpState = SETUP_ACQ_LOW;
@@ -1518,7 +1588,7 @@ int checkInputButtons(){
             if(digitalRead(MENU_BUTTON)==LOW){
                 EEPROM.write(0, vAcq_L_Config);               
                 setUpState = SETUP_ACQ_HIGH;
-                for(int l = 0; l < LED7_CONFIG_HL; l++){
+                for(int l = 0; l < LED7_CONFIG_HZ; l++){
                     displayLed7(vAcq_L_Config, LED7_ACQ_H);
                 }
             }
@@ -1538,7 +1608,7 @@ int checkInputButtons(){
             if(digitalRead(MENU_BUTTON)==LOW){
                 EEPROM.write(2, vAcq_H_Config);
                 setUpState = SETUP_TEMP_LOW;                        
-                for(int j = 0; j < LED7_CONFIG_HL; j++){
+                for(int j = 0; j < LED7_CONFIG_HZ; j++){
                     displayLed7(vAcq_H_Config, LED7_TEMP_L);
                 }
             }
@@ -1550,17 +1620,22 @@ int checkInputButtons(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         case SETUP_TEMP_LOW:
             if(digitalRead(INC_BUTTON)==LOW){
-                temp_L_Config++;   
+                //temp_L_Config++;   
+                temp_L_Config = temp_L_Config + 0.1;
             }
             if(digitalRead(DEC_BUTTON)==LOW){
-                temp_L_Config--;   
+                //temp_L_Config--;   
+                temp_L_Config = temp_L_Config - 0.1;
             }
-            if(digitalRead(MENU_BUTTON)==LOW){
-                EEPROM.write(4, temp_L_Config);                
+            if(digitalRead(MENU_BUTTON)==LOW){                
+                int temp_L_Config_2 = int(temp_L_Config * 100) % 100; 
+                EEPROM.write(4, temp_L_Config);  
+                EEPROM.write(6, temp_L_Config_2);             
                 setUpState = SETUP_TEMP_HIGH;
-                for(int l = 0; l < LED7_CONFIG_HL; l++){
+                for(int l = 0; l < LED7_CONFIG_HZ_LONG; l++){
                     displayLed7(temp_L_Config, LED7_TEMP_H);
                 }
+                acOnValue = temp_L_Config;
             }
             
             for(int l = 0; l < LED7_CONFIG_HZ; l++){
@@ -1570,23 +1645,49 @@ int checkInputButtons(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         case SETUP_TEMP_HIGH:
             if(digitalRead(INC_BUTTON)==LOW){
-                temp_H_Config++;   
+                //temp_H_Config++;   
+                temp_H_Config = temp_H_Config + 0.1;
             }
             if(digitalRead(DEC_BUTTON)==LOW){
-                temp_H_Config--;   
+                //temp_H_Config--;   
+                temp_H_Config = temp_H_Config - 0.1;
             }
             if(digitalRead(MENU_BUTTON)==LOW){
-                EEPROM.write(6, temp_H_Config);
-                setUpState = SETUP_NONE;
-                for(int l = 0; l < LED7_CONFIG_HL; l++){
-                    displayLed7(temp_H_Config, LED7_END_SETUP);
+                int temp_H_Config_2 = int(temp_H_Config * 100) % 100; 
+                EEPROM.write(24, temp_H_Config);  
+                EEPROM.write(26, temp_H_Config_2); 
+                setUpState = SETUP_AC_TYPE;
+                for(int l = 0; l < LED7_CONFIG_HZ_LONG; l++){
+                    displayLed7(temp_H_Config, TYPE_AC_SOURCE);
                 }
+                acOffValue = temp_H_Config;
             }
             
             for(int l = 0; l < LED7_CONFIG_HZ; l++){
                 displayLed7(temp_H_Config, TEMP_SOURCE);
             }
             break;
+
+        case SETUP_AC_TYPE:
+            if(digitalRead(INC_BUTTON)==LOW){
+                actype_Config++;   
+            }
+            if(digitalRead(DEC_BUTTON)==LOW){
+                actype_Config--;   
+            }
+            if(digitalRead(MENU_BUTTON)==LOW){                
+                setUpState = SETUP_NONE;
+                for(int l = 0; l < LED7_CONFIG_HZ_LONG; l++){
+                    displayLed7(actype_Config, LED7_END_SETUP);
+                }
+                EEPROM.write(22, actype_Config);
+                acType = actype_Config;
+            }
+            
+            for(int l = 0; l < LED7_CONFIG_HZ; l++){
+                displayLed7(actype_Config, TYPE_AC_SOURCE);
+            }
+        break;
          
         default:
             break;
@@ -1805,47 +1906,22 @@ void sendSmsTaskFunction(){
 }
 
 int readROMData(){  
-    char vAcq_L_th, vAcq_H_th, tTemp_L_th, tTemp_H_th;
-    /*
-    char vAcq_L_th = EEPROM.read(0);
-    char vAcq_H_th = EEPROM.read(2);  
-
-    char tTemp_L_th = EEPROM.read(4);
-    char tTemp_H_th = EEPROM.read(6);
-
-    if((vAcq_L_th>100)||(vAcq_L_th<5)){
-      vAcq_L_th = 40;
-    }
-    vAcq_L_Config = vAcq_L_th;
-    //vAcq_L_Config = float(vAcq_L_th) * 1.0;  
-      
-    if((vAcq_H_th>100)||(vAcq_H_th<5)){
-      vAcq_H_th = 45;
-    }
-    vAcq_H_Config = vAcq_H_th;
-    //vAcq_H_Config = float(vAcq_H_th) * 1.0;
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if((tTemp_L_th>100)||(tTemp_L_th<5)){
-      tTemp_L_th = 20;
-    }
-    temp_L_Config = float(tTemp_L_th) * 1.0;   
-     
-    if((tTemp_H_th>100)||(tTemp_H_th<5)){
-      tTemp_H_th = 65;
-    }
-    temp_H_Config = float(tTemp_H_th) * 1.0;
-    */
+    char vAcq_L_th, vAcq_H_th, tTemp_L_th_1, tTemp_L_th_2, tTemp_H_th_1, tTemp_H_th_2;
+ 
     vAcq_L_th = EEPROM.read(0);
     vAcq_H_th = EEPROM.read(2);  
-    tTemp_L_th = EEPROM.read(4);
-    tTemp_H_th = EEPROM.read(6);
+    tTemp_L_th_1 = EEPROM.read(4);
+    tTemp_L_th_2 = EEPROM.read(6);
+
+    tTemp_H_th_1 = EEPROM.read(24);
+    tTemp_H_th_2 = EEPROM.read(26);
 
     vAcq_L_Config = float(vAcq_L_th) * 1.0; 
     vAcq_H_Config = float(vAcq_H_th) * 1.0; 
-    temp_L_Config = float(tTemp_L_th) * 1.0; 
-    temp_H_Config = float(tTemp_H_th) * 1.0; 
+    //temp_L_Config = float(tTemp_L_th) * 1.0; 
+    //temp_H_Config = float(tTemp_H_th) * 1.0; 
+    temp_L_Config = float(tTemp_L_th_1*100 + tTemp_L_th_2)/100.00;
+    temp_H_Config = float(tTemp_H_th_1*100 + tTemp_H_th_2)/100.00;
 
     if(vAcq_L_Config < 5){
         vAcq_L_Config = 10;
@@ -1857,20 +1933,30 @@ int readROMData(){
 
     
     if(temp_L_Config < 5){
-        temp_L_Config = 10;
+        temp_L_Config = 22;
     }
     
     if(temp_H_Config < 5){
-        temp_H_Config = 15;
+        temp_H_Config = 30;
     }
     
-    
-    /*
-    vAcq_L_Config = EEPROM.read(0);
-    vAcq_H_Config = EEPROM.read(2);
-    temp_L_Config = EEPROM.read(4);
-    temp_H_Config = EEPROM.read(6);
-    */
+  ////////////////////////////////////////////////////////////////////////////////////////AC TYPE///////////////////////////////////////////////////////////////////////////////////////
+  acType = EEPROM.read(22);
+  if((acType<0)||(acType > 5)){
+      acType = 0;
+  }
+  actype_Config = acType;
+  ////////////////////////////////////////////////////////////////////////////////////////AC VALUES///////////////////////////////////////////////////////////////////////////////////
+  acOffValue = temp_H_Config; 
+  acOnValue =  temp_L_Config;
+  if((acOffValue<10)||(acOffValue > 70)){
+      acOffValue = 20;
+  }
+
+  if((acOnValue<10)||(acOnValue > 70)){
+      acOnValue = 20;
+  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     myphone2[0] = char(EEPROM.read(30)) ;
     if(myphone2[0] == '0'){
@@ -2363,129 +2449,249 @@ int mqttUploadTaskFunction( ) {
     Serial.flush();
 }
 
+
+
+
+void acON(void){
+    switch(acType){
+    case ACTYPE_MISUBISHI:
+        IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000);
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000);
+    break;
+
+    case ACTYPE_KENDO:
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000);
+    break;
+
+    case ACTYPE_KOOLMAN:
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+      
+    default:
+    break;
+        
+  }
+}
+
+
+void acOFF(void){
+    switch(acType){
+    case ACTYPE_MISUBISHI:
+        IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000);
+    break;
+
+    case ACTYPE_KENDO:
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000);
+    break;
+
+    case ACTYPE_KOOLMAN:
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000);
+      
+    default:
+    break;
+        
+  }
+}
+
+
+void acCOOL(void){
+    switch(acType){
+        case ACTYPE_MISUBISHI:
+            IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_COOL_25_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_COOL_25_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_COOL_25_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+    break;
+
+    case ACTYPE_KENDO:
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+    break;
+
+    case ACTYPE_KOOLMAN:
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(10000); // Delay > 8 ms
+      
+    default:
+    break;
+        
+  }           
+}
+
+
+void initAc(void){
+   switch(acType){
+    case ACTYPE_MISUBISHI:
+        IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000);
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+
+        IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+
+        IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
+        delay(10000); 
+        break;
+
+    case ACTYPE_KENDO:
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         break;
+
+    case ACTYPE_KOOLMAN:
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         break;
+
+    case ACTYPE_DAIKIN:
+        irdaikin.on();
+        irdaikin.sendCommand();
+        delay(10000);
+        irdaikin.off();
+        irdaikin.sendCommand();
+        delay(10000);
+        irdaikin.on();
+        irdaikin.sendCommand();
+        delay(10000);
+        irdaikin.setTemp(25);
+        //----everything is ok and to execute send command-----
+        irdaikin.sendCommand();
+        break;
+      
+    default:
+    break;
+        
+  }
+}
+
+
+
+
+
+
+
 void controlIR(){
-    /*
-    if(tempValue > 30){
-        if(IRCurrentControl != IR_AUTO){
-            if(acStatus == false){ 
-                IrSender.sendRaw(rawData_ON, sizeof(rawData_ON) / sizeof(rawData_ON[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
-                delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
-                acStatus = true;
-                Serial.println("IR ----- ON");
-            }        
-            IrSender.sendRaw(rawData_AUTO, sizeof(rawData_AUTO) / sizeof(rawData_AUTO[0]), NEC_KHZ); // Note the approach used to automatically calculate the size of the array.
-            delay(10000); // delay must be greater than 8 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal        
-            IRCurrentControl = IR_AUTO;
-            Ir_Code = "IR_AUTO";
-            Serial.println("IR ----- AUTO");
-        }
-    }
-    */
    unsigned long IrCurrentTime = millis();
     
-    if (tempValue > 31) {
+    if (tempValue >= acOffValue) {
          // Check if 5 minutes have passed since last IR send
-        if (IrCurrentTime - lastIRSendTime >= irInterval) {      
-            #ifdef AC_MISUBISHI
-            IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif 
-
-            #ifdef AC_KENDO
-            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-
-            #ifdef AC_KOOLMAN
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-
-            
+        if (IrCurrentTime - lastIRSendTime >= irInterval) {            
+            acON();          
             lastIRSendTime = IrCurrentTime;
         }
       
         if(IRCurrentControl != IR_AUTO){                                     
             IRCurrentControl = IR_AUTO;            
-            #ifdef AC_MISUBISHI
-            IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_COOL_25[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_COOL_25[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_COOL_25[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-
-            #ifdef AC_KENDO
-            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-
-            #ifdef AC_KOOLMAN
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-            
+            acCOOL();            
             IrCode = "IR_AUTO";
-            Serial.println("IR AUTO");
+            //Serial.println("IR AUTO");
         }
         
     }
 
-    if(tempValue < 26){
+    if(tempValue <= acOnValue){
        if(IRCurrentControl != IR_OFF){    
-           #ifdef AC_MISUBISHI
-           IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_OFF[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-           delay(10000); // Delay > 8 ms
-           IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_OFF[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-           delay(10000); // Delay > 8 ms
-           IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_OFF[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-           delay(10000); // Delay > 8 ms
-           #endif
-
-           #ifdef AC_KENDO
-            IrSender.sendPulseDistanceWidthFromArray(38, 2950, 1750, 400, 1150, 400, 400, &tRawData_OFF[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 2950, 1750, 400, 1150, 400, 400, &tRawData_OFF[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 2950, 1750, 400, 1150, 400, 400, &tRawData_OFF[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-
-           #ifdef AC_KOOLMAN
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            #endif
-           
+           acOFF();           
            acStatus = false;
            IRCurrentControl = IR_OFF; 
            IrCode = "IR_OFF";          
-           Serial.println("IR OFF");
+           //Serial.println("IR OFF");
        }
+    }
+
+    if((tempValue < acOffValue)&&(tempValue > acOnValue)){
+         if (IrCurrentTime - lastIRSendTime >= irInterval) {            
+            IRCurrentControl = IR_AUTO;            
+            acCOOL();            
+            IrCode = "IR_AUTO";
+            //Serial.println("IR AUTO"); 
+         }
+            
     }
   
 }
@@ -2494,22 +2700,22 @@ void IrDisplay(){
     switch(IRCurrentControl){
       case IR_NONE:
            for(int i = 0; i < LED7_HZ_LONG; i++){ 
-               displayLed7(99.99, LED7_GSM_CODE_E1);
+               displayLed7(99.99, LED7_CODE_E1);
            }
            break; 
       case IR_OFF:
            for(int i = 0; i < LED7_HZ_LONG; i++){ 
-               displayLed7(99.99, LED7_GSM_CODE_E2);
+               displayLed7(99.99, LED7_CODE_OFF);
            }
            break;
       case IR_AUTO:
            for(int i = 0; i < LED7_HZ_LONG; i++){ 
-               displayLed7(99.99, LED7_GSM_CODE_E3);
+               displayLed7(99.99, LED7_CODE_COOL);
            }
            break;
       case IR_DRY:
            for(int i = 0; i < LED7_HZ_LONG; i++){ 
-               displayLed7(99.99, LED7_GSM_CODE_E4);
+               displayLed7(99.99, LED7_CODE_E4);
            }
            break;
       default:
@@ -2543,6 +2749,7 @@ void setup() {
   pulsecount = 0;
   setupCount = 0;
   acStatus = true;
+  lastIRSendTime = 0;
   
   #ifdef ETH_FUNCTION
   Serial.begin(9600);
@@ -2575,51 +2782,64 @@ void setup() {
   #endif
 
   
-  IRCurrentControl = IR_NONE;
-  IrCode = "IR_NONE";
-  IrSender.begin(IR_SEND_PINN);
-  for(int i = 0; i < LED7_HZ_LONG; i++){
-     displayLed7(11.1, LED7_LG);
+
+
+  ////////////////////////////////////////////////////////////////////////////////////DISPLAY AC NAME//////////////////////////////////////////////////////////////////////////////////// 
+  switch(acType){
+    case ACTYPE_MISUBISHI:    
+        for(int i = 0; i < LED7_HZ_LONG; i++){
+            displayLed7(11.1, LED7_MITSUBISHI);
+        }
+    break;
+
+    case ACTYPE_KENDO:    
+        for(int i = 0; i < LED7_HZ_LONG; i++){
+            displayLed7(11.1, LED7_KENDO);
+        }
+    break;
+
+    case ACTYPE_KOOLMAN:    
+        for(int i = 0; i < LED7_HZ_LONG; i++){
+            displayLed7(11.1, LED7_KOOLMAN);
+        }
+    break;
+
+    case ACTYPE_DAIKIN:    
+        for(int i = 0; i < LED7_HZ_LONG; i++){
+            displayLed7(11.1, LED7_DAIKIN);
+        }
+    break;
+
+    default:
+    break;
   }
-  
-  #ifdef AC_MISUBISHI
-  IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  #endif
 
-  #ifdef AC_KENDO
-  IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  #endif
-
-  #ifdef AC_KOOLMAN
-  IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-  delay(10000); // Delay > 8 ms
-  #endif
+  if(acType == ACTYPE_DAIKIN){
+      irdaikin.begin();
+  }
+  else{
+      IRCurrentControl = IR_NONE;
+      IrCode = "IR_NONE";
+      IrSender.begin(IR_SEND_PINN);
+  }
+ 
 }
+
 
 void loop() {
   checkInputButtons();
   getSensorValue();
   displayAc();
+  checkInputButtons();
   displayCurent();
+  checkInputButtons();
   relayControl();
   fanControl();
   displayAcq();
+  checkInputButtons();
   outSigControl();
   displayTemp();
+  checkInputButtons();
   /*
   #ifdef GSM_FUNCTION
   sendSmsTaskFunction();   
@@ -2641,6 +2861,4 @@ void loop() {
   controlIR();
   IrDisplay();
   #endif
-  
-  //IrDisplay();
 }
