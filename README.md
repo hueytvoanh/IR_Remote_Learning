@@ -58,5 +58,9 @@ Send Misubishi
 
 <img width="350" height="107" alt="image" src="https://github.com/user-attachments/assets/a50f0db1-edfd-4699-bc29-36650841cb08" />
 
+# DAIKIN
+https://github.com/kmwebnet/Daikin-IR-send/tree/master
+https://github.com/blafois/Daikin-IR-Reverse
+<img width="1015" height="543" alt="image" src="https://github.com/user-attachments/assets/4c569dc8-edb4-4727-9306-eec68e73468a" />
 
 
