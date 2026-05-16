@@ -390,6 +390,7 @@ byte numD[] = {
 int acType;
 float acOffValue, acOnValue;
 
+#define DYIRDAIKIN_SOFT_IR
 DYIRDaikin irdaikin;
 
 
@@ -2814,14 +2815,16 @@ void setup() {
     break;
   }
 
+  IRCurrentControl = IR_NONE;
+  IrCode = "IR_NONE";
   if(acType == ACTYPE_DAIKIN){
-      irdaikin.begin();
+      irdaikin.begin(IR_SEND_PINN);
   }
-  else{
-      IRCurrentControl = IR_NONE;
-      IrCode = "IR_NONE";
+  else{    
       IrSender.begin(IR_SEND_PINN);
   }
+
+  initAc();
  
 }
 
