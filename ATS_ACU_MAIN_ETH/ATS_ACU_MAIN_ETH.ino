@@ -79,6 +79,7 @@ int IRCurrentControl;
 #define TYPE_AC_SOURCE        30 
 #define LED7_CODE_COOL        31
 #define LED7_CODE_OFF         32
+#define LED7_SET              33
 
 
 #define AC_DISABLE            HIGH
@@ -1180,6 +1181,13 @@ void displayLed7(float dataIn, int type){
        led_dot = 18; 
        break;
 
+    case LED7_SET:
+       led_100 = 16;
+       led_10 = 21;
+       led_1 = 15;
+       led_dot = 0; 
+       break;
+
     case LED7_END_SETUP:
        led_100 = 11;
        led_10 = 11;
@@ -1563,6 +1571,9 @@ int checkInputButtons(){
     if(digitalRead(MENU_BUTTON)==LOW){
         delay(2000);
         if(digitalRead(MENU_BUTTON)==LOW){
+            for(int i = 0; i < LED7_CONFIG_HZ_LONG; i++){
+                displayLed7(vAcq_L_Config, LED7_SET);  
+            }
             for(int i = 0; i < LED7_CONFIG_HZ_LONG; i++){
                 displayLed7(vAcq_L_Config, LED7_TEMP_L);  
             }
