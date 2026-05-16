@@ -370,7 +370,10 @@ byte nump[] = {
  B10011110, // E    21    
  B10011100, // C    22      
  B00001110, //  K    23   
- B10001110, // F    24                 
+ B10001110, // F    24        
+ B00011110, // t    25         
+ B10101000, // m    26            
+ B01111010, // d    27       
 };
 
 byte numD[] = {
@@ -389,6 +392,7 @@ byte numD[] = {
 
 int acType;
 float acOffValue, acOnValue;
+boolean firstAcTime;
 
 #define DYIRDAIKIN_SOFT_IR
 DYIRDaikin irdaikin;
@@ -1250,28 +1254,28 @@ void displayLed7(float dataIn, int type){
        break;
 
     case LED7_MITSUBISHI:
-       led_100 = 1;
+       led_100 = 26;
        led_10 = 1;
-       led_1 = 1;
-       led_dot = 1; 
+       led_1 = 16;
+       led_dot = 20; 
        break;
 
     case LED7_KENDO:
        led_100 = 23;
        led_10 = 21;
-       led_1 = 23;
-       led_dot = 21; 
+       led_1 = 27;
+       led_dot = 14; 
        break;
 
     case LED7_KOOLMAN:
        led_100 = 23;
        led_10 = 14;
-       led_1 = 14;
-       led_dot = 13; 
+       led_1 = 26;
+       led_dot = 19; 
        break;
 
    case LED7_DAIKIN:
-       led_100 = 8;
+       led_100 = 27;
        led_10 = 19;
        led_1 = 23;
        led_dot = 1; 
@@ -2686,11 +2690,18 @@ void controlIR(){
     }
 
     if((tempValue < acOffValue)&&(tempValue > acOnValue)){
-         if (IrCurrentTime - lastIRSendTime >= irInterval) {            
-            IRCurrentControl = IR_AUTO;            
-            acCOOL();            
-            IrCode = "IR_AUTO";
-            //Serial.println("IR AUTO"); 
+         if(firstAcTime == true){
+             IRCurrentControl = IR_AUTO;            
+             acCOOL();
+             firstAcTime = false;
+         }
+         else{
+             if (IrCurrentTime - lastIRSendTime >= irInterval) {            
+                 IRCurrentControl = IR_AUTO;            
+                 acCOOL();            
+                 IrCode = "IR_AUTO";
+             //Serial.println("IR AUTO"); 
+             }
          }
             
     }
@@ -2751,6 +2762,7 @@ void setup() {
   setupCount = 0;
   acStatus = true;
   lastIRSendTime = 0;
+  firstAcTime = true;
   
   #ifdef ETH_FUNCTION
   Serial.begin(9600);
@@ -2786,6 +2798,7 @@ void setup() {
 
 
   ////////////////////////////////////////////////////////////////////////////////////DISPLAY AC NAME//////////////////////////////////////////////////////////////////////////////////// 
+  //acType = ACTYPE_DAIKIN;
   switch(acType){
     case ACTYPE_MISUBISHI:    
         for(int i = 0; i < LED7_HZ_LONG; i++){
