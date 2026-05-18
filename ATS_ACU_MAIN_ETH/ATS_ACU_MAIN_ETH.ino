@@ -147,6 +147,7 @@
 #define ACTYPE_KOOLMAN             2
 #define ACTYPE_DAIKIN              3
 #define ACTYPE_LG                  4
+#define DELAY_KOOLMAN        10000
 
 
 //#define DEBUG
@@ -2505,12 +2506,12 @@ void acON(void){
          break;
 
     case ACTYPE_KOOLMAN:
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(DELAY_KOOLMAN); // Delay > 8 ms
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(DELAY_KOOLMAN); // Delay > 8 ms
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(DELAY_KOOLMAN); // Delay > 8 ms 
          break;
 
     case ACTYPE_DAIKIN:
@@ -2560,12 +2561,12 @@ void acOFF(void){
          break;
 
     case ACTYPE_KOOLMAN:
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000);
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(DELAY_KOOLMAN); // Delay > 8 ms
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(DELAY_KOOLMAN); // Delay > 8 ms
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(DELAY_KOOLMAN); // Delay > 8 ms
          break;
 
     case ACTYPE_DAIKIN:
@@ -2604,11 +2605,11 @@ void acCOOL(void){
 
         case ACTYPE_KOOLMAN:
             IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
+            delay(DELAY_KOOLMAN); // Delay > 8 ms
+            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+            delay(DELAY_KOOLMAN); // Delay > 8 ms
             IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
-            IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-            delay(10000); // Delay > 8 ms
+            delay(DELAY_KOOLMAN); // Delay > 8 ms
             break;
 
     case ACTYPE_DAIKIN:
@@ -2677,25 +2678,25 @@ void initAc(void){
          break;
 
     case ACTYPE_KOOLMAN:
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
-         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
+         delay(10000); 
+         IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
          break;
 
@@ -2741,14 +2742,18 @@ void controlIR(){
     
     if (tempValue >= acOffValue) {
          // Check if 5 minutes have passed since last IR send
-        if (IrCurrentTime - lastIRSendTime >= irInterval) {            
-            acON();          
+        if (IrCurrentTime - lastIRSendTime >= irInterval) {  
+            digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
+            acON();                      
+            digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
             lastIRSendTime = IrCurrentTime;
         }
       
         if(IRCurrentControl != IR_AUTO){                                     
-            IRCurrentControl = IR_AUTO;            
-            acCOOL();            
+            IRCurrentControl = IR_AUTO;             
+            digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
+            acCOOL();                        
+            digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
             IrCode = "IR_AUTO";
             //Serial.println("IR AUTO");
         }
@@ -2756,8 +2761,10 @@ void controlIR(){
     }
 
     if(tempValue <= acOnValue){
-       if(IRCurrentControl != IR_OFF){    
-           acOFF();           
+       if(IRCurrentControl != IR_OFF){           
+           digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);    
+           acOFF();                      
+           digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
            acStatus = false;
            IRCurrentControl = IR_OFF; 
            IrCode = "IR_OFF";          
@@ -2767,14 +2774,18 @@ void controlIR(){
 
     if((tempValue < acOffValue)&&(tempValue > acOnValue)){
          if(firstAcTime == true){
-             IRCurrentControl = IR_AUTO;            
+             IRCurrentControl = IR_AUTO;                  
+             digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);       
              acCOOL();
+             digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
              firstAcTime = false;
          }
          else{
              if (IrCurrentTime - lastIRSendTime >= irInterval) {            
-                 IRCurrentControl = IR_AUTO;            
-                 acCOOL();            
+                 IRCurrentControl = IR_AUTO;                             
+                 digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);
+                 acCOOL();                     
+                 digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);        
                  IrCode = "IR_AUTO";
              //Serial.println("IR AUTO"); 
              }
@@ -2912,8 +2923,10 @@ void setup() {
   else{    
       IrSender.begin(IR_SEND_PINN, DISABLE_LED_FEEDBACK);
   }
-
+  
+  digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);
   initAc();
+  digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
 }
 
 
