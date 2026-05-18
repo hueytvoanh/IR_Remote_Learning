@@ -188,7 +188,7 @@ char fMenu, fAuto, fTest, but3, scanMc;
 float vThConfig;
 float temp_L_Config, temp_H_Config, vAcq_L_Config, vAcq_H_Config, actype_Config;
 boolean configVoltage;
-char setUpState;
+int setUpState;
 
 //////////////////////////////////////////////////////////////////////////////////////////////MQTT///////////////////////////////////////////////////////////////////////////////////////////////
 #define TIME_UPLOAD_SECOND                  10
@@ -1571,14 +1571,15 @@ int checkInputButtons(){
     if(digitalRead(MENU_BUTTON)==LOW){
         delay(2000);
         if(digitalRead(MENU_BUTTON)==LOW){
-            for(int i = 0; i < LED7_CONFIG_HZ_LONG; i++){
-                displayLed7(vAcq_L_Config, LED7_SET);  
+            if(setUpState == SETUP_NONE){
+                for(int ii = 0; ii < LED7_CONFIG_HZ_LONG; ii++){
+                    displayLed7(1.0, LED7_SET);  
+                }
+                for(int iii = 0; iii < LED7_CONFIG_HZ_LONG; iii++){
+                    displayLed7(1.0, LED7_TEMP_L);  
+                }
+                setUpState = SETUP_TEMP_LOW;
             }
-            for(int i = 0; i < LED7_CONFIG_HZ_LONG; i++){
-                displayLed7(vAcq_L_Config, LED7_TEMP_L);  
-            }
-            setUpState = SETUP_TEMP_LOW;
-            setupCount = 0;
         }
     }
 
@@ -1648,13 +1649,13 @@ int checkInputButtons(){
                 EEPROM.write(4, temp_L_Config);  
                 EEPROM.write(6, temp_L_Config_2);             
                 setUpState = SETUP_TEMP_HIGH;
-                for(int l = 0; l < LED7_CONFIG_HZ_LONG; l++){
+                for(int temp_l_count = 0; temp_l_count < LED7_CONFIG_HZ_LONG; temp_l_count++){
                     displayLed7(temp_L_Config, LED7_TEMP_H);
                 }
                 acOnValue = temp_L_Config;
             }
             
-            for(int l = 0; l < LED7_CONFIG_HZ; l++){
+            for(int temp_l_out = 0; temp_l_out < LED7_CONFIG_HZ; temp_l_out++){
                 displayLed7(temp_L_Config, TEMP_SOURCE);
             }
             break;
@@ -1673,13 +1674,13 @@ int checkInputButtons(){
                 EEPROM.write(24, temp_H_Config);  
                 EEPROM.write(26, temp_H_Config_2); 
                 setUpState = SETUP_AC_TYPE;
-                for(int l = 0; l < LED7_CONFIG_HZ_LONG; l++){
+                for(int temp_h_count = 0; temp_h_count < LED7_CONFIG_HZ_LONG; temp_h_count++){
                     displayLed7(temp_H_Config, TYPE_AC_SOURCE);
                 }
                 acOffValue = temp_H_Config;
             }
             
-            for(int l = 0; l < LED7_CONFIG_HZ; l++){
+            for(int temp_h_out = 0; temp_h_out < LED7_CONFIG_HZ; temp_h_out++){
                 displayLed7(temp_H_Config, TEMP_SOURCE);
             }
             break;
@@ -1693,14 +1694,15 @@ int checkInputButtons(){
             }
             if(digitalRead(MENU_BUTTON)==LOW){                
                 setUpState = SETUP_NONE;
-                for(int l = 0; l < LED7_CONFIG_HZ_LONG; l++){
-                    displayLed7(actype_Config, LED7_END_SETUP);
+                for(int ac_type_count = 0; ac_type_count < LED7_CONFIG_HZ_LONG; ac_type_count++){
+                    displayLed7(1.0, LED7_END_SETUP);
                 }
                 EEPROM.write(22, actype_Config);
                 acType = actype_Config;
+                setupCount = 0;
             }
             
-            for(int l = 0; l < LED7_CONFIG_HZ; l++){
+            for(int ac_type_out = 0; ac_type_out < LED7_CONFIG_HZ; ac_type_out++){
                 displayLed7(actype_Config, TYPE_AC_SOURCE);
             }
         break;
@@ -2469,6 +2471,7 @@ int mqttUploadTaskFunction( ) {
 
 
 void acON(void){
+  int runValue;
     switch(acType){
     case ACTYPE_MISUBISHI:
         IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
@@ -2477,7 +2480,7 @@ void acON(void){
         delay(10000);
         IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
         delay(10000);
-    break;
+        break;
 
     case ACTYPE_KENDO:
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
@@ -2486,7 +2489,7 @@ void acON(void){
          delay(10000); 
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000);
-    break;
+         break;
 
     case ACTYPE_KOOLMAN:
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
@@ -2495,9 +2498,29 @@ void acON(void){
          delay(10000); 
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
-      
+         break;
+
+    case ACTYPE_DAIKIN:
+         //runValue = (acOnValue + acOffValue)/2;
+         irdaikin.on();
+         irdaikin.setSwing_off();
+         irdaikin.setMode(1);
+         irdaikin.setFan(4);//FAN speed to MAX
+         irdaikin.setTemp(25);
+         irdaikin.sendCommand();
+
+         delay(10000);
+         irdaikin.on();
+         irdaikin.setSwing_off();
+         irdaikin.setMode(1);
+         irdaikin.setFan(4);//FAN speed to MAX
+         irdaikin.setTemp(25);
+         irdaikin.sendCommand();
+         
+         break;
+        
     default:
-    break;
+        break;
         
   }
 }
@@ -2512,7 +2535,7 @@ void acOFF(void){
         delay(10000); 
         IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
         delay(10000);
-    break;
+        break;
 
     case ACTYPE_KENDO:
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
@@ -2521,7 +2544,7 @@ void acOFF(void){
          delay(10000); 
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000);
-    break;
+         break;
 
     case ACTYPE_KOOLMAN:
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
@@ -2530,6 +2553,13 @@ void acOFF(void){
          delay(10000); 
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4500, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000);
+         break;
+
+    case ACTYPE_DAIKIN:
+        irdaikin.off();
+        irdaikin.sendCommand();
+        delay(10000);
+        break;
       
     default:
     break;
@@ -2539,6 +2569,7 @@ void acOFF(void){
 
 
 void acCOOL(void){
+    int runCoolValue;
     switch(acType){
         case ACTYPE_MISUBISHI:
             IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_COOL_25_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
@@ -2547,25 +2578,36 @@ void acCOOL(void){
             delay(10000); // Delay > 8 ms
             IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_COOL_25_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
-    break;
+            break;
 
-    case ACTYPE_KENDO:
+        case ACTYPE_KENDO:
             IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
             IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
             IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1750, 400, 1150, 400, 400, &tRawData_COOL_25_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
-    break;
+            break;
 
-    case ACTYPE_KOOLMAN:
+        case ACTYPE_KOOLMAN:
             IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
             IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
             IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1650, 550, 550, &tRawData_COOL_25_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
             delay(10000); // Delay > 8 ms
-      
+            break;
+
+    case ACTYPE_DAIKIN:
+         runCoolValue = (acOnValue + acOffValue)/2;
+         //irdaikin.on();
+         irdaikin.setSwing_off();
+         irdaikin.setMode(1);
+         irdaikin.setFan(4);//FAN speed to MAX
+         irdaikin.setTemp(runCoolValue);
+         irdaikin.sendCommand();
+         break;
+         
     default:
     break;
         
@@ -2646,17 +2688,27 @@ void initAc(void){
 
     case ACTYPE_DAIKIN:
         irdaikin.on();
-        irdaikin.sendCommand();
-        delay(10000);
-        irdaikin.off();
-        irdaikin.sendCommand();
-        delay(10000);
-        irdaikin.on();
-        irdaikin.sendCommand();
-        delay(10000);
+        irdaikin.setSwing_off();
+        irdaikin.setMode(1);
+        irdaikin.setFan(4);//FAN speed to MAX
         irdaikin.setTemp(25);
         //----everything is ok and to execute send command-----
         irdaikin.sendCommand();
+
+        delay(10000);
+
+        irdaikin.off();
+        irdaikin.sendCommand();
+
+        delay(20000);
+
+        irdaikin.on();
+        irdaikin.setSwing_off();
+        irdaikin.setMode(1);
+        irdaikin.setFan(4);//FAN speed to MAX
+        irdaikin.setTemp(25);
+        //----everything is ok and to execute send command-----
+        irdaikin.sendCommand();        
         break;
       
     default:
@@ -2815,28 +2867,28 @@ void setup() {
         for(int i = 0; i < LED7_HZ_LONG; i++){
             displayLed7(11.1, LED7_MITSUBISHI);
         }
-    break;
+        break;
 
     case ACTYPE_KENDO:    
         for(int i = 0; i < LED7_HZ_LONG; i++){
             displayLed7(11.1, LED7_KENDO);
         }
-    break;
+        break;
 
     case ACTYPE_KOOLMAN:    
         for(int i = 0; i < LED7_HZ_LONG; i++){
             displayLed7(11.1, LED7_KOOLMAN);
         }
-    break;
+        break;
 
     case ACTYPE_DAIKIN:    
         for(int i = 0; i < LED7_HZ_LONG; i++){
             displayLed7(11.1, LED7_DAIKIN);
         }
-    break;
+        break;
 
     default:
-    break;
+        break;
   }
 
   IRCurrentControl = IR_NONE;
