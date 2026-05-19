@@ -2523,15 +2523,15 @@ void acON(void){
          irdaikin.setTemp(25);
          irdaikin.sendCommand();
 
-         delay(10000);
+         delay(20000);
          irdaikin.on();
          irdaikin.setSwing_off();
          irdaikin.setMode(1);
          irdaikin.setFan(4);//FAN speed to MAX
          irdaikin.setTemp(25);
          irdaikin.sendCommand();
-         
-         break;
+         delay(20000);
+         break;     
         
     default:
         break;
@@ -2620,6 +2620,7 @@ void acCOOL(void){
          irdaikin.setFan(4);//FAN speed to MAX
          irdaikin.setTemp(runCoolValue);
          irdaikin.sendCommand();
+         delay(5000);
          break;
          
     default:
