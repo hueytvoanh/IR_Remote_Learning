@@ -1580,11 +1580,11 @@ int checkInputButtons(){
         delay(2000);
         if(digitalRead(MENU_BUTTON)==LOW){
             if(setUpState == SETUP_NONE){
-                /*
+                
                 for(int ii = 0; ii < LED7_CONFIG_HZ_LONG; ii++){
                     displayLed7(1.0, LED7_SET);  
                 }
-                */
+                
                 for(int iii = 0; iii < LED7_CONFIG_HZ_LONG; iii++){
                     displayLed7(1.0, LED7_TEMP_L);  
                 }
