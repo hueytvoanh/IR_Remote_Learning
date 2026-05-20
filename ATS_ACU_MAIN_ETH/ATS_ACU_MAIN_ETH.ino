@@ -197,7 +197,7 @@ boolean configVoltage;
 int setUpState;
 boolean acStatus; 
 int IRCurrentControl;
-float acOffValue, acOnValue;
+float acHighValue, acLowValue;
 boolean firstAcTime;
 
 #define DYIRDAIKIN_SOFT_IR
@@ -1663,7 +1663,7 @@ int checkInputButtons(){
                 for(int temp_l_count = 0; temp_l_count < LED7_CONFIG_HZ_LONG; temp_l_count++){
                     displayLed7(1.0, LED7_TEMP_H);
                 }
-                acOnValue = temp_L_Config;
+                acLowValue = temp_L_Config;
             }
             
             for(int temp_l_out = 0; temp_l_out < LED7_CONFIG_HZ; temp_l_out++){
@@ -1688,7 +1688,7 @@ int checkInputButtons(){
                 for(int temp_h_count = 0; temp_h_count < LED7_CONFIG_HZ_LONG; temp_h_count++){
                     displayLed7(1.0, TYPE_AC_SOURCE);
                 }
-                acOffValue = temp_H_Config;
+                acHighValue = temp_H_Config;
             }
             
             for(int temp_h_out = 0; temp_h_out < LED7_CONFIG_HZ; temp_h_out++){
@@ -1979,14 +1979,14 @@ int readROMData(){
   }
   actype_Config = acType;
   ////////////////////////////////////////////////////////////////////////////////////////AC VALUES///////////////////////////////////////////////////////////////////////////////////
-  acOffValue = temp_H_Config; 
-  acOnValue =  temp_L_Config;
-  if((acOffValue<10)||(acOffValue > 70)){
-      acOffValue = 20;
+  acHighValue = temp_H_Config; 
+  acLowValue =  temp_L_Config;
+  if((acHighValue<10)||(acHighValue > 70)){
+      acHighValue = 28;
   }
 
-  if((acOnValue<10)||(acOnValue > 70)){
-      acOnValue = 20;
+  if((acLowValue<10)||(acLowValue > 70)){
+      acLowValue = 25;
   }
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2515,7 +2515,7 @@ void acON(void){
          break;
 
     case ACTYPE_DAIKIN:
-         //runValue = (acOnValue + acOffValue)/2;
+         //runValue = (acLowValue + acHighValue)/2;
          irdaikin.on();
          irdaikin.setSwing_off();
          irdaikin.setMode(1);
@@ -2613,7 +2613,7 @@ void acCOOL(void){
             break;
 
     case ACTYPE_DAIKIN:
-         runCoolValue = (acOnValue + acOffValue)/2;
+         runCoolValue = (acLowValue + acHighValue)/2;
          //irdaikin.on();
          irdaikin.setSwing_off();
          irdaikin.setMode(1);
@@ -2741,7 +2741,7 @@ void initAc(void){
 void controlIR(){
    unsigned long IrCurrentTime = millis();
     
-    if (tempValue >= acOffValue) {
+    if (tempValue >= acHighValue) {
          // Check if 5 minutes have passed since last IR send
         if (IrCurrentTime - lastIRSendTime >= irInterval) {  
             digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
@@ -2761,7 +2761,7 @@ void controlIR(){
         
     }
 
-    if(tempValue <= acOnValue){
+    if(tempValue <= acLowValue){
        if(IRCurrentControl != IR_OFF){           
            digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);    
            acOFF();                      
@@ -2773,7 +2773,8 @@ void controlIR(){
        }
     }
 
-    if((tempValue < acOffValue)&&(tempValue > acOnValue)){
+/*
+    if((tempValue < acHighValue)&&(tempValue > acLowValue)){
          if(firstAcTime == true){
              IRCurrentControl = IR_AUTO;                  
              digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);       
@@ -2793,7 +2794,7 @@ void controlIR(){
          }
             
     }
-  
+*/  
 }
 
 void IrDisplay(){
@@ -2967,3 +2968,17 @@ void loop() {
   IrDisplay();
   #endif
 }
+
+
+
+/*
+3140,1630,xxx,1220,xxx,370                 xxx:420 
+ 
+ir_MitsubishiHeavy.cpp
+MitsubishiHeavy 88
+const uint16_t kMitsubishiHeavyHdrMark = 3140;
+const uint16_t kMitsubishiHeavyHdrSpace = 1630;
+const uint16_t kMitsubishiHeavyBitMark = 370;
+const uint16_t kMitsubishiHeavyOneSpace = 420;
+const uint16_t kMitsubishiHeavyZeroSpace = 1220;
+*/
