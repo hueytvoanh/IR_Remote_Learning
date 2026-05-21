@@ -147,7 +147,8 @@
 #define ACTYPE_KOOLMAN             2
 #define ACTYPE_DAIKIN              3
 #define ACTYPE_LG                  4
-#define DELAY_KOOLMAN        10000
+#define DELAY_KOOLMAN              10000
+#define KOMAN_INIT_DELAY           15000
 
 
 //#define DEBUG
@@ -2680,25 +2681,25 @@ void initAc(void){
 
     case ACTYPE_KOOLMAN:
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY); 
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY);
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY);
 
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY);
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY);
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY); 
 
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY); 
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY); 
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
-         delay(10000); 
+         delay(KOMAN_INIT_DELAY);
          break;
 
     case ACTYPE_DAIKIN:
