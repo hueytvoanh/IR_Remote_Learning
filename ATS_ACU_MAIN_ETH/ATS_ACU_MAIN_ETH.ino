@@ -2648,12 +2648,14 @@ void initAc(void){
         IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_OFF_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
         delay(10000); 
 
+        /*
         IrSender.sendPulseDistanceWidthFromArray(38, 3200, 1550, 450, 1150, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
         delay(10000); 
         IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 450, 1200, 450, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
         delay(10000); 
         IrSender.sendPulseDistanceWidthFromArray(38, 3150, 1600, 400, 1200, 400, 350, &tRawData_ON_MISUBISHI[0], 88, PROTOCOL_IS_LSB_FIRST, 0, 0);
         delay(10000); 
+        */
         break;
 
     case ACTYPE_KENDO:
@@ -2671,12 +2673,14 @@ void initAc(void){
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_OFF_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
 
+         /*
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
          IrSender.sendPulseDistanceWidthFromArray(38, 2900, 1800, 400, 1150, 400, 400, &tRawData_ON_KENDO[0], 112, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(10000); 
+         */
          break;
 
     case ACTYPE_KOOLMAN:
@@ -2694,12 +2698,14 @@ void initAc(void){
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_OFF_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(KOMAN_INIT_DELAY); 
 
+         /*
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1650, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(KOMAN_INIT_DELAY); 
          IrSender.sendPulseDistanceWidthFromArray(38, 8950, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(KOMAN_INIT_DELAY); 
          IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4450, 550, 1700, 550, 550, &tRawData_ON_KOOLMAN[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 0);
          delay(KOMAN_INIT_DELAY);
+         */
          break;
 
     case ACTYPE_DAIKIN:
@@ -2717,7 +2723,7 @@ void initAc(void){
         irdaikin.sendCommand();
 
         delay(20000);
-
+        /*
         irdaikin.on();
         irdaikin.setSwing_off();
         irdaikin.setMode(1);
@@ -2725,10 +2731,11 @@ void initAc(void){
         irdaikin.setTemp(25);
         //----everything is ok and to execute send command-----
         irdaikin.sendCommand();        
+        */
         break;
       
     default:
-    break;
+        break;
         
   }
 }
