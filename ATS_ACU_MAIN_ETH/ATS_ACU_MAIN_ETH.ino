@@ -147,7 +147,7 @@
 #define ACTYPE_KOOLMAN             2
 #define ACTYPE_DAIKIN              3
 #define ACTYPE_LG                  4
-#define DELAY_KOOLMAN              10000
+#define DELAY_KOOLMAN              15000
 #define KOMAN_INIT_DELAY           15000
 
 
