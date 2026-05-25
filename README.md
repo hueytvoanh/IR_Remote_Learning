@@ -54,4 +54,7 @@ struct PulseDistanceWidthProtocolConstants {
 Send Misubishi
 <img width="972" height="469" alt="image" src="https://github.com/user-attachments/assets/1c29a816-de8d-4a00-9b38-9eba6634133a" />
 
+# Lib
 
+https://github.com/Arduino-IRremote/Arduino-IRremote
+https://github.com/crankyoldgit/IRremoteESP8266/tree/master \
