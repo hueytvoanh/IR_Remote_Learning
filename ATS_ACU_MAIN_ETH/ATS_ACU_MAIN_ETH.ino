@@ -57,33 +57,34 @@
 #define NHOT_SOURCE           4
 #define ACQ_SOURCE            5
 #define CURRENT_SOURCE        6
-#define MAIN_VOLTAGE          7
-#define LED7_ACQ_H            8
-#define LED7_ACQ_L            9
-#define LED7_TEMP_H           10
-#define LED7_TEMP_L           11
-#define LED7_SOURCE_10        12
-#define LED7_SOURCE_100       13
-#define LED7_CODE_E1      14
-#define LED7_CODE_E2      15
-#define LED7_CODE_E3      16
-#define LED7_CODE_E4      17
-#define LED7_CODE_E5      18
-#define LED7_CODE_E6      19
-#define LED7_CODE_E7      20
-#define LED7_CODE_E8      21
-#define LED7_AC_OK            22
-#define LED7_AC_NOK           23
-#define LED7_GSM_SMS_ERROR    24 
-#define LED7_LG               25    
-#define LED7_MITSUBISHI       26    
-#define LED7_KENDO            27    
-#define LED7_KOOLMAN          28    
-#define LED7_DAIKIN           29    
-#define TYPE_AC_SOURCE        30 
-#define LED7_CODE_COOL        31
-#define LED7_CODE_OFF         32
-#define LED7_SET              33
+#define RTC_SOURCE            7
+#define MAIN_VOLTAGE          8
+#define LED7_ACQ_H            9
+#define LED7_ACQ_L            10
+#define LED7_TEMP_H           11
+#define LED7_TEMP_L           12
+#define LED7_SOURCE_10        13
+#define LED7_SOURCE_100       14
+#define LED7_CODE_E1          15
+#define LED7_CODE_E2          16
+#define LED7_CODE_E3          17
+#define LED7_CODE_E4          18
+#define LED7_CODE_E5          19
+#define LED7_CODE_E6          20
+#define LED7_CODE_E7          21
+#define LED7_CODE_E8          22
+#define LED7_AC_OK            23
+#define LED7_AC_NOK           24
+#define LED7_GSM_SMS_ERROR    25 
+#define LED7_LG               26    
+#define LED7_MITSUBISHI       27    
+#define LED7_KENDO            28    
+#define LED7_KOOLMAN          29    
+#define LED7_DAIKIN           30    
+#define TYPE_AC_SOURCE        31 
+#define LED7_CODE_COOL        32
+#define LED7_CODE_OFF         33
+#define LED7_SET              34
 
 
 #define AC_DISABLE            HIGH
@@ -206,6 +207,8 @@ boolean acStatus;
 int IRCurrentControl;
 float acHighValue, acLowValue;
 boolean firstAcTime;
+
+int minuteValue_1, minuteValue_2, hourValue_1, hourValue_2;
 
 #define DYIRDAIKIN_SOFT_IR
 DYIRDaikin irdaikin;
@@ -596,6 +599,13 @@ int checkBuff(){
     outputInfor = strstr (RxBuff,"ACON");
     if(outputInfor) {
         rtcOff = false;
+        String timeSet = String(outputInfor);
+        hourValue_1 = timeSet[4] - '0';
+        hourValue_2 = timeSet[5] - '0';
+
+        minuteValue_1 = timeSet[6] - '0';
+        minuteValue_2 = timeSet[7] - '0';
+        
         digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
         delay(1000);
         digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);
@@ -618,6 +628,13 @@ int checkBuff(){
     outputInfor = strstr (RxBuff,"ACOFF");
     if(outputInfor) {  
         rtcOff = true; 
+        String timeSet = String(outputInfor);
+        hourValue_1 = timeSet[5] - '0';
+        hourValue_2 = timeSet[6] - '0';
+
+        minuteValue_1 = timeSet[7] - '0';
+        minuteValue_2 = timeSet[8] - '0';
+        
         digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
         delay(1000);
         digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);
@@ -636,7 +653,19 @@ int checkBuff(){
     else{
         digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);    
     }
-    
+
+
+/*
+    outputInfor = strstr (RxBuff,"RTC");
+    if(outputInfor) {  
+        String timeSet = String(outputInfor); 
+        String hourChar = timeSet.substring(3,4);
+        String minuteChar = timeSet.substring(5,6);
+        //hourValue = hourChar.toInt();
+        //minuteValue = minuteChar.toInt();
+            
+    }
+*/    
     return 0;
 }
 
@@ -1219,6 +1248,14 @@ void displayLed7(float dataIn, int type){
        }
        
        break;
+
+  case RTC_SOURCE:       
+       led_100 = hourValue_1;
+       led_10 = hourValue_2;
+       led_1 = minuteValue_1;
+       led_dot = minuteValue_2;                      
+       break;
+       
   case MAIN_SOURCE:       
        if(mainState == false){
            led_100 = dataIn/10;
@@ -1265,8 +1302,8 @@ void displayLed7(float dataIn, int type){
     case LED7_SET:
        led_100 = 16;
        led_10 = 21;
-       led_1 = 15;
-       led_dot = 0; 
+       led_1 = 25;
+       led_dot = 10; 
        break;
 
     case LED7_END_SETUP:
@@ -1424,6 +1461,9 @@ void displayLed7(float dataIn, int type){
        shiftOut(LED7_SDA, LED7_SCL, LSBFIRST, ~numD[led_10]);
        break;
   case CURRENT_SOURCE:
+       shiftOut(LED7_SDA, LED7_SCL, LSBFIRST, ~numD[led_10]);
+       break;
+  case RTC_SOURCE:
        shiftOut(LED7_SDA, LED7_SCL, LSBFIRST, ~numD[led_10]);
        break;
   case MAIN_SOURCE:
@@ -1843,6 +1883,20 @@ int displayCurent(){
   for(int i = 0; i < LED7_HZ; i++){
   //for(int i = 0; i < 3000; i++){
      displayLed7(currentValue, CURRENT_SOURCE);
+  }
+
+  return 1;
+}
+
+
+int displayRtc(){
+  if(setUpState != SETUP_NONE){
+    return 1; 
+  }
+  
+  
+  for(int i = 0; i < LED7_HZ; i++){  
+     displayLed7(11, RTC_SOURCE);
   }
 
   return 1;
@@ -2956,6 +3010,11 @@ void setup() {
   firstAcTime = true;
   rtcOff = false;
 
+  minuteValue_1 = 9; 
+  minuteValue_2 = 9; 
+  hourValue_1 = 9;
+  hourValue_2 = 9;
+
 
   Serial.begin(9600);
   
@@ -3022,6 +3081,7 @@ void setup() {
     default:
         break;
   }
+
    
   IRCurrentControl = IR_NONE;
   IrCode = "IR_NONE";
@@ -3038,6 +3098,7 @@ void setup() {
   digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);
   initAc();
   digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
+  
 }
 
 
@@ -3047,7 +3108,8 @@ void loop() {
   getSensorValue();
   displayAc();
   checkInputButtons();
-  displayCurent();
+  //displayCurent();
+  //displayRtc();
   //checkInputButtons();
   //relayControl();
   //fanControl();
@@ -3078,6 +3140,7 @@ void loop() {
   #ifdef RTC_ESP32_FUNCTION
   serialEvent();
   checkBuff();
+  displayRtc();
   #endif
 
   
