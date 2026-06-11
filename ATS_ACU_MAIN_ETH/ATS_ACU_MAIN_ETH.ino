@@ -2943,12 +2943,17 @@ void controlIR(){
       }
    }
    else{
-       if (IrCurrentTime - lastIRSendTime >= irInterval) {  
-              digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
-              acOFF();                      
-              digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
-              lastIRSendTime = IrCurrentTime;
-          }
+       
+       //if (IrCurrentTime - lastIRSendTime >= irInterval) {  
+       if(IRCurrentControl != IR_OFF){ 
+           digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
+           acOFF();                      
+           digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
+           acStatus = false;
+           IRCurrentControl = IR_OFF; 
+           IrCode = "IR_OFF"; 
+           lastIRSendTime = IrCurrentTime;
+       }
    }
    
 }
