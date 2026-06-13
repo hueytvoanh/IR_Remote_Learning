@@ -144,7 +144,7 @@
 #define IR_FUNCTION
 #define RTC_ESP32_FUNCTION
 
-#define DAIKIN_LIB
+//#define DAIKIN_LIB
 #define ACTYPE_KENDO               0 
 #define ACTYPE_MISUBISHI           1
 #define ACTYPE_KOOLMAN             2
