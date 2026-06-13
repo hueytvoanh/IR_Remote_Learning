@@ -2944,8 +2944,8 @@ void controlIR(){
    }
    else{
        
-       //if (IrCurrentTime - lastIRSendTime >= irInterval) {  
-       if(IRCurrentControl != IR_OFF){ 
+       if (IrCurrentTime - lastIRSendTime >= irInterval) {  
+       //if(IRCurrentControl != IR_OFF){ 
            digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
            acOFF();                      
            digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
