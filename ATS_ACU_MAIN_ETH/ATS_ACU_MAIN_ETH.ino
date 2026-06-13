@@ -2931,13 +2931,15 @@ void controlIR(){
       }
 
       if(tempValue <= acLowValue){
-          if(IRCurrentControl != IR_OFF){           
+          //if(IRCurrentControl != IR_OFF){           
+            if (IrCurrentTime - lastIRSendTime >= irInterval) {  
               digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);    
               acOFF();                      
               digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
               acStatus = false;
               IRCurrentControl = IR_OFF; 
               IrCode = "IR_OFF";          
+              lastIRSendTime = IrCurrentTime;
               //Serial.println("IR OFF");
            }
       }
