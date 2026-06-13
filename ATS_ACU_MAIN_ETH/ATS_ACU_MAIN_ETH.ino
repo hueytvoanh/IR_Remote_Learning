@@ -2916,15 +2916,17 @@ void controlIR(){
               digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
               acON();                      
               digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
-              lastIRSendTime = IrCurrentTime;
-          }
+              
+          //}
       
-          if(IRCurrentControl != IR_AUTO){                                     
+         // if(IRCurrentControl != IR_AUTO){                                     
+            //if (IrCurrentTime - lastIRSendTime >= irInterval) {
               IRCurrentControl = IR_AUTO;             
               digitalWrite(OUTPUT_LOAD, LOAD_ACTIVE);           
               acCOOL();                        
               digitalWrite(OUTPUT_LOAD, LOAD_DEACTIVE);
               IrCode = "IR_AUTO";
+              lastIRSendTime = IrCurrentTime;
               //Serial.println("IR AUTO");
           }
         
